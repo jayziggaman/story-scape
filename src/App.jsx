@@ -43,6 +43,7 @@ const App = () => {
     // localStorage.removeItem('story-scape-user-auth')
     // localStorage.removeItem('story-scape-sign-in-method')
   }
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [loggedIn, setLoggedIn] = useState(false)
   const [loading, setLoading] = useState(true)
   const [userAuth, setUserAuth] = useState(
@@ -136,6 +137,27 @@ const App = () => {
     }
   }
 
+    
+  
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -185,6 +207,7 @@ const App = () => {
       })
     })
   }
+  
 
   const checkForId = (userId, from, method) => {
     const passwordRef = doc(db, 'users', userId, 'encrypted', userId)
@@ -462,14 +485,19 @@ const App = () => {
 
 
   useEffect(() => {
-    if (users) {
-      setUser(users.find(user => user.id === userAuth))
-    }
-    
-    if (users && feed) {
+    if (isOnline) {
+      if (users) {
+        setUser(users.find(user => user.id === userAuth))
+      }
+      
+      if (users && feed) {
+        setLoading(false)
+      }
+
+    } else {
       setLoading(false)
     }
-  }, [users, userAuth, feed])
+  }, [users, userAuth, feed, isOnline])
 
 
   useEffect(() => {
@@ -604,36 +632,38 @@ const App = () => {
 
 
   useEffect(() => {
-    const main = document.querySelector('main')
+    if (isOnline) {
+      const main = document.querySelector('main')
     
-    if (main) {
-      if (main.classList.contains('login-main') ||
-       main.classList.contains('set-password-main') ||
-        main.classList.contains('create-account-main'))
-      {
-        main.style.marginTop = '0px'
-        if (location.pathname !== '/create-account') {
-          main.style.backgroundColor = 'white'
-        }
-        
-      } else {
-        if (loading) {
-          main.id = 'loading'
-
+      if (main) {
+        if (main.classList.contains('login-main') ||
+        main.classList.contains('set-password-main') ||
+          main.classList.contains('create-account-main'))
+        {
+          main.style.marginTop = '0px'
+          if (location.pathname !== '/create-account') {
+            main.style.backgroundColor = 'white'
+          }
+          
         } else {
-          main.id = ''
-
-          if (!loggedIn) {
-            main.style.marginTop = '50px'
+          if (loading) {
+            main.id = 'loading'
 
           } else {
-            main.style.marginTop = '0px'
-            main.style.minHeight = '100vh'
-          } 
+            main.id = ''
+
+            if (!loggedIn) {
+              main.style.marginTop = '50px'
+
+            } else {
+              main.style.marginTop = '0px'
+              main.style.minHeight = '100vh'
+            } 
+          }
         }
       }
     }
-  }, [user, location, loading, loggedIn])
+  }, [user, location, loading, loggedIn, isOnline])
 
 
   function appFtn(e) {
@@ -686,21 +716,21 @@ const App = () => {
   }, [darkMode])
 
 
-
   return (
     <div className={darkMode ? "App dm" : "App"} ref={appRef}
       role={'button'} onClick={e => appFtn(e)}
     >
       <appContext.Provider
         value={{
-          showNewForm, setShowNewForm, windowWidth, options, accessOptions, viewOptions, setViewOptions, recentSearches, setRecentSearches, darkMode, setDarkMode, isArticleView, setIsArticleView, articleInView, setArticleInView, userAuth, navRef, footerRef, showPopup, setShowPopup, popup, setPopup, users, time, imgTypes, vidTypes, user, articles, userArticles, setUserArticles, userCollections, setUserCollections, showAddToCollectionForm, setShowAddToCollectionForm, createCollection, setCreateCollection, optionInfo, collectionArticles, setCollectionArticles, appRef, hideFeatures, undoHide, setAuthMethod, checkForId, loading, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, makeArticlePrivate, makeArticlePublic, deletedArticles, myDeletedArticles, setMyDeletedArticles, deletedCollections, collections, quickAddToCollection, setQuickAddToCollection, showCommentOptions, setShowCommentOptions, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, optionsCoord, setOptionsCoord, showLogOut, setShowLogOut, showDeleteForm, setShowDeleteForm, uploadPassword, root, createUser, collectionType, setCollectionType, removeFromCollection, feed, currUser, setCurrUser, profileRecentSearches, setProfileRecentSearches, setOptions, profileOptionsInfo, loggedIn, processing, setProcessing
+          showNewForm, setShowNewForm, windowWidth, options, accessOptions, viewOptions, setViewOptions, recentSearches, setRecentSearches, darkMode, setDarkMode, isArticleView, setIsArticleView, articleInView, setArticleInView, userAuth, navRef, footerRef, showPopup, setShowPopup, popup, setPopup, users, time, imgTypes, vidTypes, user, articles, userArticles, setUserArticles, userCollections, setUserCollections, showAddToCollectionForm, setShowAddToCollectionForm, createCollection, setCreateCollection, optionInfo, collectionArticles, setCollectionArticles, appRef, hideFeatures, undoHide, setAuthMethod, checkForId, loading, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, makeArticlePrivate, makeArticlePublic, deletedArticles, myDeletedArticles, setMyDeletedArticles, deletedCollections, collections, quickAddToCollection, setQuickAddToCollection, showCommentOptions, setShowCommentOptions, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, optionsCoord, setOptionsCoord, showLogOut, setShowLogOut, showDeleteForm, setShowDeleteForm, uploadPassword, root, createUser, collectionType, setCollectionType, removeFromCollection, feed, currUser, setCurrUser, profileRecentSearches, setProfileRecentSearches, setOptions, profileOptionsInfo, loggedIn, processing, setProcessing, isOnline
         }}
       >
-
         {windowWidth < 600 ? <Footer /> : <Nav />}
 
-        <div>
-          {!loading && !loggedIn && <LogInMessage />}
+        <div
+          style={{backgroundColor: location.pathname === '/create-account' && 'transparent'}}
+        >
+          {!loading && !loggedIn && isOnline && <LogInMessage />}
 
           <Popup />
           <NewBlog />

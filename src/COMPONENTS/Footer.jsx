@@ -9,7 +9,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { appContext } from '../App'
 
 const Footer = () => {
-  const { setShowNewForm, darkMode, footerRef, user, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, loggedIn } = useContext(appContext)
+  const { setShowNewForm, darkMode, footerRef, user, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, loggedIn, isOnline, userAuth } = useContext(appContext)
   
   const navigate = useNavigate()
   const location = useLocation()
@@ -32,15 +32,21 @@ const Footer = () => {
       </NavLink>
 
       <button role={'button'} onClick={() => {
-        loggedIn ? setShowNewForm(true) : navigate(`/login?type=sign-in&from=${location.pathname}`)
+        if (userAuth) {
+          loggedIn ? setShowNewForm(true) : navigate(`/login?type=sign-in&from=${location.pathname}`)
+        }
       }}>
         <span></span>
         <span></span>
       </button>
 
       <NavLink className={({ isActive }) => isActive ? 'active-link ' : ''}
-        to={loggedIn ? '/profile?content-type=articles' :
-        `/login?type=sign-in&from=${location.pathname}`}
+        to={isOnline ?
+          `${loggedIn ? '/profile?content-type=articles' :
+            `/login?type=sign-in&from=${location.pathname}`
+          }`
+          : `${userAuth && '/profile?content-type=articles'}`
+        }
       >
         {darkMode ?
           <img src={user?.avatar ? user?.avatar : dmUserIcon} alt='' />

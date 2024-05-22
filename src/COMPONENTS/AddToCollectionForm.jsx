@@ -4,7 +4,7 @@ import { appContext } from '../App'
 import { db } from '../firebase/config'
 
 const AddToCollectionForm = () => {
-  const { showAddToCollectionForm, setShowAddToCollectionForm, userCollections, setCreateCollection, userAuth, setShowPopup, setPopup, optionInfo, setQuickAddToCollection, user, collectionType, articleInView, removeFromCollection } = useContext(appContext)
+  const { showAddToCollectionForm, setShowAddToCollectionForm, userCollections, setCreateCollection, userAuth, setShowPopup, setPopup, optionInfo, setQuickAddToCollection, user, collectionType, articleInView, removeFromCollection, isOnline } = useContext(appContext)
 
   const [collections, setCollections] = useState([])
   const [displayCollections, setDisplayCollections] = useState([])
@@ -81,59 +81,75 @@ const AddToCollectionForm = () => {
   const addToCollection = (e) => {
     e.preventDefault()
 
-    collections.forEach(collection => {
+    if (isOnline) {
+      collections.forEach(collection => {
 
-      const collectionRef = doc(db, 'users', userAuth, 'collections', collection)
-
-      getDoc(collectionRef).then(doc => {
-        const collectionData = doc.data()
-
-        const arr = collectionData.items.value
-
-        const {id, thumbnail} = optionInfo.current
-
-        const condition = arr.find(item => item.id === id)
-
-        if (!condition) {
-          updateDoc(collectionRef, {
-            items: {
-              value: [...arr, {id, thumbnail}]
-            }
-          }).then(() => {
-            finish(id)
+        const collectionRef = doc(db, 'users', userAuth, 'collections', collection)
   
-          }).catch(() => {
-            setShowPopup(true) 
-            setPopup({
-              type: 'bad', message: `Couldn't add to collection. Please try again.`
+        getDoc(collectionRef).then(doc => {
+          const collectionData = doc.data()
+  
+          const arr = collectionData.items.value
+  
+          const {id, thumbnail} = optionInfo.current
+  
+          const condition = arr.find(item => item.id === id)
+  
+          if (!condition) {
+            updateDoc(collectionRef, {
+              items: {
+                value: [...arr, {id, thumbnail}]
+              }
+            }).then(() => {
+              finish(id)
+    
+            }).catch(() => {
+              setShowPopup(true) 
+              setPopup({
+                type: 'bad', message: `Couldn't add to collection. Please try again.`
+              })
             })
-          })
-
-        } else {
-          if (collection.length === 1) {
-            // setShowPopup(true) 
-            // setPopup({
-            //   type: 'bad', message: `This article has already been added to the collection.`
-            // })
+  
+          } else {
+            if (collection.length === 1) {
+              // setShowPopup(true) 
+              // setPopup({
+              //   type: 'bad', message: `This article has already been added to the collection.`
+              // })
+            }
           }
-        }
-      }).catch(() => {
-        setShowPopup(true) 
-        setPopup({
-          type: 'bad', message: `Couldn't add to collection. Please try again.`
+        }).catch(() => {
+          setShowPopup(true) 
+          setPopup({
+            type: 'bad', message: `Couldn't add to collection. Please try again.`
+          })
         })
       })
-    })
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
+    }
   }
 
 
   const unaddFromCollection = e => {
     e.preventDefault()
-    
-    collections.map(col => {
-      const collection = userCollections.find(item => item.id === col)
-      removeFromCollection(collection, articleInView.id)
-    })
+
+    if (isOnline) {
+      collections.map(col => {
+        const collection = userCollections.find(item => item.id === col)
+        removeFromCollection(collection, articleInView.id)
+      })
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
+    }
   }
 
 

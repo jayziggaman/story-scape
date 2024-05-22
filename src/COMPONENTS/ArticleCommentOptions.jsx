@@ -4,7 +4,7 @@ import { appContext } from '../App'
 import { db } from '../firebase/config'
 
 const ArticleCommentOptions = () => {
-  const { userAuth, articleInView, subscribeToUser, unSubscribeToUser, users, setPopup, setShowPopup, optionsCoord, showCommentOptions, setShowCommentOptions } = useContext(appContext)
+  const { userAuth, articleInView, subscribeToUser, unSubscribeToUser, users, setPopup, setShowPopup, optionsCoord, showCommentOptions, setShowCommentOptions, isOnline } = useContext(appContext)
 
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [comment, setComment] = useState()
@@ -32,103 +32,139 @@ const ArticleCommentOptions = () => {
 
 
   const pinComment = () => {
-    const docRef = doc(db, 'articles', articleInView.id)
+    if (isOnline) {
+      const docRef = doc(db, 'articles', articleInView.id)
 
-    let comments = articleInView.comments.value.filter(comment => comment.id !== id)
-    comments.forEach(comment => comment.pinned = false)
-
-    comments.sort((a, b) => b.createdAt - a.createdAt)
-
-    const updatedComment = {
-      ...comment, pinned: true
-    }
-    comments = [updatedComment, ...comments]
-
-    updateDoc(docRef, {
-      comments: {
-        value: [...comments]
-      }
-    }).catch(() => {
+      let comments = articleInView.comments.value.filter(comment => comment.id !== id)
       comments.forEach(comment => comment.pinned = false)
+
+      comments.sort((a, b) => b.createdAt - a.createdAt)
+
+      const updatedComment = {
+        ...comment, pinned: true
+      }
+      comments = [updatedComment, ...comments]
 
       updateDoc(docRef, {
         comments: {
           value: [...comments]
         }
+      }).catch(() => {
+        comments.forEach(comment => comment.pinned = false)
+
+        updateDoc(docRef, {
+          comments: {
+            value: [...comments]
+          }
+        })
+
+        setShowPopup(true)
+        setPopup({
+          type: 'bad',
+          message: `Couldn't pin comment. Please try again`
+        })
       })
 
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'bad',
-        message: `Couldn't pin comment. Please try again`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-    })
+    }
+
+
+
+    
   }
 
 
   const unPinComment = () => {
-    const docRef = doc(db, 'articles', articleInView.id)
+    if (isOnline) {
+      const docRef = doc(db, 'articles', articleInView.id)
 
-    let comments = articleInView.comments.value.filter(comment => comment.id !== id)
-    comments.forEach(comment => comment.pinned = false)
+      let comments = articleInView.comments.value.filter(comment => comment.id !== id)
+      comments.forEach(comment => comment.pinned = false)
 
-    comments.sort((a, b) => b.createdAt - a.createdAt)
+      comments.sort((a, b) => b.createdAt - a.createdAt)
 
-    const updatedComment = {
-      ...comment, pinned: false
-    }
-    comments = [updatedComment, ...comments]
-
-    updateDoc(docRef, {
-      comments: {
-        value: [...comments]
-      }
-    }).catch(() => {
       const updatedComment = {
         ...comment, pinned: false
       }
+      comments = [updatedComment, ...comments]
 
       updateDoc(docRef, {
         comments: {
-          value: [updatedComment, ...comments]
+          value: [...comments]
         }
+      }).catch(() => {
+        const updatedComment = {
+          ...comment, pinned: false
+        }
+
+        updateDoc(docRef, {
+          comments: {
+            value: [updatedComment, ...comments]
+          }
+        })
+
+        setShowPopup(true)
+        setPopup({
+          type: 'bad',
+          message: `Couldn't pin comment. Please try again`
+        })
       })
 
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'bad',
-        message: `Couldn't pin comment. Please try again`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-    })
+    }
+
+
+
+    
   }
 
 
 
   const deleteComment = () => {
-    const docRef = doc(db, 'articles', articleInView.id)
+    if (isOnline) {
+      const docRef = doc(db, 'articles', articleInView.id)
 
-    const comment = comments.find(comment => comment.id === id)
+      const comment = comments.find(comment => comment.id === id)
 
-    let comments = articleInView.comments.value.filter(comment => comment.id !== id)
+      let comments = articleInView.comments.value.filter(comment => comment.id !== id)
 
-    updateDoc(docRef, {
-      comments: {
-        value: [...comments]
-      }
-
-    }).catch(() => {
       updateDoc(docRef, {
         comments: {
-          value: [...comments, comment]
+          value: [...comments]
         }
+
+      }).catch(() => {
+        updateDoc(docRef, {
+          comments: {
+            value: [...comments, comment]
+          }
+        })
+
+        setShowPopup(true)
+        setPopup({
+          type: 'bad',
+          message: `Couldn't delete comment. Please try again`
+        })
       })
 
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'bad',
-        message: `Couldn't delete comment. Please try again`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-    })
+    }
+
+
+
+    
   }
 
 

@@ -7,7 +7,7 @@ import { addDoc, deleteDoc, doc, serverTimestamp, Timestamp, updateDoc } from 'f
 
 
 const NewBlog = () => {
-  const {showNewForm, setShowNewForm, imgTypes, setShowPopup, setPopup, userAuth, time, user, setProcessing} = useContext(appContext)
+  const { showNewForm, setShowNewForm, imgTypes, setShowPopup, setPopup, userAuth, time, user, setProcessing, isOnline } = useContext(appContext)
 
   const [finalStage, setFinalStage] = useState(false)
   const [article, setArticle] = useState('')
@@ -85,64 +85,72 @@ const NewBlog = () => {
       deleted: false
     }
 
-    if (!articleThumbnail) {
-      setShowPopup(true)
-      setPopup({
-        type: 'bad', message: `Please select a thumbnail for your article.`
-      })
+    if (isOnline) {
+      if (!articleThumbnail) {
+        setShowPopup(true)
+        setPopup({
+          type: 'bad', message: `Please select a thumbnail for your article.`
+        })
 
-    } else if (article.length < 100) {
-      setShowPopup(true)
-      setPopup({
-        type: 'bad', message: `Your article needs to be longer. At least 100 characters.`
-      })
+      } else if (article.length < 100) {
+        setShowPopup(true)
+        setPopup({
+          type: 'bad', message: `Your article needs to be longer. At least 100 characters.`
+        })
 
-    } else if (articleTitle.length < 5) {
-      setShowPopup(true)
-      setPopup({
-        type: 'bad', message: `Your title needs to be longer. At least 5 characters.`
-      })
+      } else if (articleTitle.length < 5) {
+        setShowPopup(true)
+        setPopup({
+          type: 'bad', message: `Your title needs to be longer. At least 5 characters.`
+        })
 
-    } else if (articleCategory === '') {
-      setShowPopup(true)
-      setPopup({
-        type: 'bad', message: `Please select a category for your article.`
-      })
+      } else if (articleCategory === '') {
+        setShowPopup(true)
+        setPopup({
+          type: 'bad', message: `Please select a category for your article.`
+        })
 
-    } else {
-      setProcessing(true)
-      addDoc(articlesRef, newArticle).then(docRef => {
-        uploadId = docRef.id
-        
-        const userRef = doc(db, 'users', userAuth)
-        
-        updateDoc(userRef, {
-          articles: {
-            value: [...user.articles.value, uploadId]
-          }
+      } else {
+        setProcessing(true)
+        addDoc(articlesRef, newArticle).then(docRef => {
+          uploadId = docRef.id
+          
+          const userRef = doc(db, 'users', userAuth)
+          
+          updateDoc(userRef, {
+            articles: {
+              value: [...user.articles.value, uploadId]
+            }
+          }).catch(() => {
+            cancelUpload(uploadId)
+
+          }).finally(() => {
+            setProcessing(false)
+          })
+
+        }).then(() => {
+          setShowNewForm(false)
+          setShowPopup(true)
+          setPopup({
+            type: 'good', message: `Article posted successfully.`
+          })
+
         }).catch(() => {
           cancelUpload(uploadId)
+          setShowPopup(true)
+          setPopup({
+            type: 'bad', message: `Couldn't complete upload. Please try again.`
+          })
 
         }).finally(() => {
           setProcessing(false)
         })
+      }
 
-      }).then(() => {
-        setShowNewForm(false)
-        setShowPopup(true)
-        setPopup({
-          type: 'good', message: `Article posted successfully.`
-        })
-
-      }).catch(() => {
-        cancelUpload(uploadId)
-        setShowPopup(true)
-        setPopup({
-          type: 'bad', message: `Couldn't complete upload. Please try again.`
-        })
-
-      }).finally(() => {
-        setProcessing(false)
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
     }
   }
@@ -199,6 +207,7 @@ const NewBlog = () => {
                 <option value="Comedy">Comedy</option>
                 <option value="Crypto">Crypto</option>
                 <option value="Education">Education</option>
+                <option value="Entertainment">Entertainment</option>
                 <option value="Fashion">Fashion</option>
                 <option value="Lifestyle">Lifestyle</option>
                 <option value="Music">Music</option>

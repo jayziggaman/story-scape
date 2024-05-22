@@ -4,11 +4,12 @@ import { appContext } from '../App'
 import { FaAngleLeft } from 'react-icons/fa'
 import ProfileArticle from '../COMPONENTS/ProfileArticle'
 import NoMedia from '../COMPONENTS/NoMedia'
+import IsOffline from '../COMPONENTS/IsOffline'
 
 
 const CollectionPage = () => {
   const { collectionId } = useParams()
-  const { hideFeatures, undoHide, windowWidth, userCollections, feed, collectionArticles, setCollectionArticles } = useContext(appContext)
+  const { hideFeatures, undoHide, windowWidth, userCollections, feed, collectionArticles, setCollectionArticles, isOnline } = useContext(appContext)
 
   const [collection, setCollection] = useState()
   const location = useLocation()
@@ -64,32 +65,40 @@ const CollectionPage = () => {
         </Link>
 
         <h3>
-          {collection?.name}
+          {isOnline ?
+            <>{collection?.name}</>
+            :
+            <>Collection</>
+          }
         </h3>
       </header>
 
-      <section className="collection-page-section media"
-        style={{
-          gridTemplateColumns: collection?.articles.length === 0 && '1fr'
-        }}
-      >
-        {collection?.articles.length === 0 ?
-          <NoMedia
-            message='When you add an article to this collection it will show here.'
-          />
-          :
-          <>
-            {collection?.articles.map((article, i) => {
-              return (
-                <ProfileArticle key={i} article={article}
-                  collectionArticles={collectionArticles}
-                  type='in-collection' collectionId={collectionId}
-                />
-              )
-            })}
-          </>
-        }
-      </section>
+      {isOnline ?
+        <section className="collection-page-section media"
+          style={{
+            gridTemplateColumns: collection?.articles.length === 0 && '1fr'
+          }}
+        >
+          {collection?.articles.length === 0 ?
+            <NoMedia
+              message='When you add an article to this collection it will show here.'
+            />
+            :
+            <>
+              {collection?.articles.map((article, i) => {
+                return (
+                  <ProfileArticle key={i} article={article}
+                    collectionArticles={collectionArticles}
+                    type='in-collection' collectionId={collectionId}
+                  />
+                )
+              })}
+            </>
+          }
+        </section>
+        :
+        <IsOffline />
+      }
     </main>
   )
 }

@@ -5,7 +5,7 @@ import { appContext } from '../App'
 import { db } from '../firebase/config'
 
 const ArticlePageFooter = ({ setShowCommentForm, article }) => {
-  const { userAuth, setPopup, setShowPopup, user, setShowAddToCollectionForm, optionInfo, setCollectionType, loggedIn } = useContext(appContext)
+  const { userAuth, setPopup, setShowPopup, user, setShowAddToCollectionForm, optionInfo, setCollectionType, loggedIn, windowWidth } = useContext(appContext)
   const [hasLiked, setHasLiked] = useState(false)
   const [hasSaved, setHasSaved] = useState(false)
 
@@ -129,15 +129,17 @@ const ArticlePageFooter = ({ setShowCommentForm, article }) => {
         </div>
 
         
-        <div>
-          <button onClick={() => setShowCommentForm(true)}>
-            <FaRegComment />
-          </button>
+        {windowWidth < 700 &&
+          <div>
+            <button onClick={() => setShowCommentForm(true)}>
+              <FaRegComment />
+            </button>
 
-          <span>
-            {article.comments.value.length}
-          </span>
-        </div>
+            <span>
+              {article.comments.value.length}
+            </span>
+          </div>
+        }
 
         
         <div>

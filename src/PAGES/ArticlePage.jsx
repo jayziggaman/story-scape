@@ -2,17 +2,18 @@ import { uuidv4 } from '@firebase/util'
 import { doc, Timestamp, updateDoc } from 'firebase/firestore'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FaAngleLeft, FaArrowLeft } from 'react-icons/fa'
-import { useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { appContext } from '../App'
 import ArticleComment from '../COMPONENTS/ArticleComment'
 import ArticlePageFooter from '../COMPONENTS/ArticlePageFooter'
+import IsOffline from '../COMPONENTS/IsOffline'
 import Loading from '../COMPONENTS/Loading'
 import { db } from '../firebase/config'
 
 
 const ArticlePage = () => {
   const { articleId } = useParams()
-  const { articleInView, setArticleInView, feed, users, hideFeatures, undoHide, windowWidth, userAuth, time, setShowPopup, setPopup, showCommentOptions, setShowCommentOptions, user, setOptionsCoord, darkMode, dmUserIcon, lmUserIcon } = useContext(appContext)
+  const { articleInView, setArticleInView, feed, users, hideFeatures, undoHide, windowWidth, userAuth, time, setShowPopup, setPopup, showCommentOptions, setShowCommentOptions, user, setOptionsCoord, darkMode, dmUserIcon, lmUserIcon, isOnline } = useContext(appContext)
   const location = useLocation()
   const [articleLoading, setArticleLoading] = useState(true)
   const [articleCreator, setArticleCreator] = useState()
@@ -23,19 +24,24 @@ const ArticlePage = () => {
   const divRef = useRef()
 
 
+  useEffect(() => {
+    if (isOnline) {
+      if (articleInView) {
+        setArticleLoading(false)
+      }
+
+    } else {
+      setArticleLoading(false)
+    }
+  }, [isOnline, articleInView])
+
+
 
   useEffect(() => {
     if (feed) {
       setArticleInView(feed.find(article => article.id === articleId))
     }
   }, [feed])
-
-
-  useEffect(() => {
-    if (articleInView) {
-      setArticleLoading(false)
-    }
-  }, [articleInView])
 
 
   const scroll = () => {
@@ -46,12 +52,12 @@ const ArticlePage = () => {
   useEffect(() => {
     if (!articleLoading) {
       window.addEventListener('scroll', scroll)
-      divRef.current.addEventListener('scroll', scroll)
+      divRef.current?.addEventListener('scroll', scroll)
     }
 
     return () => {
       if (!articleLoading) {
-        window?.removeEventListener('scroll', scroll)
+        window.removeEventListener('scroll', scroll)
         divRef.current?.removeEventListener('scroll', scroll)
       }
     }
@@ -145,15 +151,23 @@ const ArticlePage = () => {
   useEffect(() => {
     if (!articleLoading) {
       if (windowWidth > 699) {
-        sectionRef.current.style.transform = 'translateY(0%)'
+        if (sectionRef.current) {
+          sectionRef.current.style.transform = 'translateY(0%)'
+        }
   
       } else if (showCommentForm) {
-        sectionRef.current.style.bottom = '0'
-        sectionRef.current.style.transform = 'translateY(0%)'
+        if (sectionRef.current) {
+          sectionRef.current.style.bottom = '0'
+          sectionRef.current.style.transform = 'translateY(0%)'
+        }
+        
   
       } else {
-        sectionRef.current.style.bottom = '-2000px'
-        sectionRef.current.style.transform = 'translateY(200%)'
+        if (sectionRef.current) {
+          sectionRef.current.style.bottom = '-2000px'
+          sectionRef.current.style.transform = 'translateY(200%)'
+        }
+        
       }
     }
   }, [windowWidth, showCommentForm, articleLoading])
@@ -198,83 +212,87 @@ const ArticlePage = () => {
           </p>
         </header>
 
-        {articleLoading ?
-          <Loading />
-          :
+        {isOnline ?
           <>
-            <section className="article-page-section">
-              <div>
-                <img src={articleInView?.thumbnail} alt="" />
-              </div>
+            {articleLoading ?
+              <Loading />
+              :
+              <>
+                <section className="article-page-section">
+                  <div>
+                    <img src={articleInView?.thumbnail} alt="" />
+                  </div>
 
-              <h3>
-                {articleInView?.title}
-              </h3>
+                  <h3>
+                    {articleInView?.title}
+                  </h3>
 
-              <p style={{marginBottom: '30px', marginTop: '0px'}}>
-                {articleInView?.category} . {articleInView?.date}
-              </p>
-
-              <pre>
-                {articleInView?.body}
-              </pre>
-
-              <p>
-                {darkMode ?
-                  <img
-                    src={articleCreator.avatar || dmUserIcon} alt=""
-                  />
-                  :
-                  <img
-                    src={articleCreator.avatar || lmUserIcon} alt=""
-                  />
-                }
-                written by <span>{articleCreator?.userName}</span>
-              </p>
-
-              {windowWidth < 700 && 
-                <ArticlePageFooter
-                  setShowCommentForm={setShowCommentForm} article={articleInView}
-                />
-              }
-            </section>
-
-            <section ref={sectionRef} className="article-comment-section"
-              style={{ maxHeight: window.innerHeight < 600 ? '90vh' : '600px' }}
-            >
-              <div ref={divRef} className={
-                articleInView?.comments?.value?.length === 0 ?
-                  "article-comments no-comment" : "article-comments"}
-              >
-                {articleInView?.comments?.value?.length === 0 ?
-                  <p>
-                    No comment under this article. Be the first to leave a comment.
+                  <p style={{marginBottom: '30px', marginTop: '0px'}}>
+                    {articleInView?.category} . {articleInView?.date}
                   </p>
-                  :
-                  <>
-                    {articleInView?.comments?.value?.map(comment => {
-                      return (
-                        <ArticleComment key={comment.id} comment={comment}
-                          setOptionsCoord={setOptionsCoord}
-                          showCommentOptions={showCommentOptions}
-                          setShowCommentOptions={setShowCommentOptions}
-                        />
-                      )
-                    })}
-                  </>
-                }
-              </div>
 
-              <form action="submit" onSubmit={(e) => postComment(e)}>
-                <input type="text" placeholder='Leave a comment' value={comment}
-                  onChange={e => setComment(e.target.value)}
-                />
-                <button>
-                  <FaArrowLeft />
-                </button>
-              </form>
-            </section>
+                  <pre>
+                    {articleInView?.body}
+                  </pre>
+
+                  <Link to={`/${articleCreator.userName}`}>
+                    {darkMode ?
+                      <img
+                        src={articleCreator.avatar || dmUserIcon} alt=""
+                      />
+                      :
+                      <img
+                        src={articleCreator.avatar || lmUserIcon} alt=""
+                      />
+                    }
+                    written by <span>{articleCreator?.userName}</span>
+                  </Link>
+
+                  <ArticlePageFooter
+                    setShowCommentForm={setShowCommentForm} article={articleInView}
+                  />
+                </section>
+
+                <section ref={sectionRef} className="article-comment-section"
+                  style={{ maxHeight: window.innerHeight < 600 ? '90vh' : '600px' }}
+                >
+                  <div ref={divRef} className={
+                    articleInView?.comments?.value?.length === 0 ?
+                      "article-comments no-comment" : "article-comments"}
+                  >
+                    {articleInView?.comments?.value?.length === 0 ?
+                      <p>
+                        No comment under this article. Be the first to leave a comment.
+                      </p>
+                      :
+                      <>
+                        {articleInView?.comments?.value?.map(comment => {
+                          return (
+                            <ArticleComment key={comment.id} comment={comment}
+                              setOptionsCoord={setOptionsCoord}
+                              showCommentOptions={showCommentOptions}
+                              setShowCommentOptions={setShowCommentOptions}
+                            />
+                          )
+                        })}
+                      </>
+                    }
+                  </div>
+
+                  <form action="submit" onSubmit={(e) => postComment(e)}>
+                    <input type="text" placeholder='Leave a comment' value={comment}
+                      onChange={e => setComment(e.target.value)}
+                    />
+                    <button>
+                      <FaArrowLeft />
+                    </button>
+                  </form>
+                </section>
+              </>
+            }
           </>
+          :
+          <IsOffline />
         }
       </main>
 

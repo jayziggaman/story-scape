@@ -5,17 +5,23 @@ import { Link } from 'react-router-dom'
 import Loading from '../COMPONENTS/Loading'
 import Collection from '../COMPONENTS/Collection'
 import NoMedia from '../COMPONENTS/NoMedia'
+import IsOffline from '../COMPONENTS/IsOffline'
 
 const DeletedCollections = () => {
-  const { deletedCollections } = useContext(appContext)
+  const { deletedCollections, isOnline } = useContext(appContext)
   
   const [pageLoading, setPageLoading] = useState(true)
 
   useEffect(() => {
-    if (deletedCollections) {
+    if (isOnline) {
+      if (deletedCollections) {
+        setPageLoading(false)
+      }
+
+    } else {
       setPageLoading(false)
     }
-  }, [deletedCollections])
+  }, [deletedCollections, isOnline])
   
   
   return (
@@ -27,36 +33,42 @@ const DeletedCollections = () => {
         <h3>Deleted collections</h3>
       </header>
 
-      {pageLoading ?
-        <Loading />
-        :
-        <section className={
-          deletedCollections?.length > 0 ?
-            'collections media' : `no-collection collections media`
-          }
-          style={{
-            gridTemplateColumns: deletedCollections?.length === 0 && '1fr'
-          }}
-        >
-          {deletedCollections?.length === 0 ?
-            <>
-              <NoMedia
-                message='When you delete a collection it will show here.'
-              />
-            </>
+      {isOnline ?
+        <>
+          {pageLoading ?
+            <Loading />
             :
-            <>
-              {deletedCollections.map(collection => {
-                return (
-                  <Collection key={collection.id} collection={collection}
-                    link='blocking'
+            <section className={
+              deletedCollections?.length > 0 ?
+                'collections media' : `no-collection collections media`
+              }
+              style={{
+                gridTemplateColumns: deletedCollections?.length === 0 && '1fr'
+              }}
+            >
+              {deletedCollections?.length === 0 ?
+                <>
+                  <NoMedia
+                    message='When you delete a collection it will show here.'
                   />
-                )
-              })}
-            </>
+                </>
+                :
+                <>
+                  {deletedCollections?.map(collection => {
+                    return (
+                      <Collection key={collection.id} collection={collection}
+                        link='blocking'
+                      />
+                    )
+                  })}
+                </>
+              }
+              
+            </section>
           }
-          
-        </section>
+        </>
+        :
+        <IsOffline />
       }
     </main>
   )

@@ -61,7 +61,7 @@
 
 .App>div {
   height: 100%;
-  width: 100vw;
+  /* width: 100vw; */
   overflow-x: hidden;
 }
 
@@ -118,7 +118,7 @@ main {
   min-height: calc(100vh - 50px);
   height: auto;
   background-color: white;
-  /* width: 100vw; */
+  width: 100%;
   /* overflow-x: hidden; */
   padding: 20px 20px 12.5vh;
 }
@@ -805,6 +805,47 @@ main.set-password-main form button {
 
 
 
+/* IS OFFLINE */
+.is-offline header {
+  background-color: var(--light-mode-color);
+  gap: 10px;
+  left: 0;
+  height: 60px;
+}
+
+.App.dm .is-offline header {
+  background-color: var(--dark-mode-color);
+}
+
+.is-offline img {
+  height: 35px;
+  width: 35px;
+  border-radius: 100px;
+  object-fit: cover;
+}
+
+.is-offline header h1 {
+  color: #fff;
+}
+
+.is-offline button {
+  background-color: var(--light-mode-color);
+  color: #fff;
+}
+
+.App.dm .is-offline button {
+  background-color: var(--dark-mode-color);
+}
+
+
+
+
+
+
+
+
+
+
 /* LOADING AND PROCESSING */
 .loading {
   margin-top: 30px;
@@ -1374,7 +1415,7 @@ article.article>div.article-section-marker {
 /* ARTICLE PAGE */
 .article-page-main {
   padding: 0;
-  padding-bottom: 17.5vh;
+  padding-bottom: 10vh;
 }
 
 .article-page-main header {
@@ -1383,7 +1424,6 @@ article.article>div.article-section-marker {
   align-items: center;
   border-bottom: 1px solid gainsboro;
   padding-bottom: 10px;
-  margin-bottom: 30px;
   padding: 25px 10px 10px;
 }
 
@@ -1436,22 +1476,24 @@ article.article>div.article-section-marker {
   padding-right: 20px;
 }
 
-.article-page-section pre {
+.article-page-section pre,
+.article-page-section p {
   line-height: 27px;
   word-spacing: 1px;
   padding-left: 20px;
   padding-right: 20px;
 }
 
-.article-page-section>p {
-  margin-top: 50px;
+.article-page-section>a {
+  margin-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
-.article-page-section p img {
+.article-page-section a img {
   height: 40px;
   width: 40px;
   object-fit: cover;
@@ -1460,7 +1502,7 @@ article.article>div.article-section-marker {
   min-height: unset;
 }
 
-.article-page-section p span {
+.article-page-section a span {
   font-weight: bold;
   font-size: 1.2rem;
 }
@@ -1483,6 +1525,7 @@ footer.form {
 }
 
 footer.form>div {
+  min-width: 220px;
   width: 50vw;
   max-width: 250px;
   height: 100%;
@@ -2113,6 +2156,7 @@ nav .logo-div img {
 nav .logo-div p {
   font-size: 1.1rem;
   letter-spacing: 0.5px;
+  color: #fff;
 }
 
 nav a {
@@ -3513,6 +3557,11 @@ section.articles>article p {
 
 @media(min-width: 600px) {
 
+  .is-offline header {
+    left: 100px;
+    height: 70px;
+  }
+
   .loading,
   .processing {
     left: 100px;
@@ -3590,11 +3639,36 @@ section.articles>article p {
 
   .article-page-section {
     width: 60%;
-    margin-top: 85px;
+    margin-top: 50px;
   }
 
   .article-page-section img {
     min-height: 250px;
+  }
+
+  footer.form {
+    bottom: unset;
+    top: 0;
+    right: 0;
+    left: unset;
+    width: 100px;
+    z-index: 50;
+  }
+
+  footer.form>div {
+    width: 150px;
+    min-width: unset;
+    height: 90%;
+    border-radius: unset;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+    display: flex;
+    gap: 10px;
+    padding: 0 20px;
+    justify-content: space-around;
+  }
+
+  footer.form>div div {
+    width: 40px;
   }
 
   .article-comment-section {
@@ -3622,6 +3696,10 @@ section.articles>article p {
   .App {
     display: grid;
     grid-template-columns: 200px 1fr;
+  }
+
+  .is-offline header {
+    left: 200px;
   }
 
   .loading,

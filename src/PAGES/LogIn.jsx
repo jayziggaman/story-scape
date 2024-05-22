@@ -45,8 +45,6 @@ const LogIn = () => {
       setProcessing(false)
     }
   }, [])
-
-  console.log(processing)
   
 
   useEffect(() => {

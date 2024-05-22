@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { appContext } from '../App'
 
@@ -11,10 +11,11 @@ import dmSearchActive from '../img-icons/dm-search-active.JPG'
 import storyScapeLogo from '../images/story-scape-logo.jpg'
 
 const Nav = () => {
-  const { userAuth, setShowNewForm, darkMode, windowWidth, navRef, user, lmUserIcon, dmUserIcon, dmSettingsIcon, lmSettingsIcon, loggedIn } = useContext(appContext)
+  const { userAuth, setShowNewForm, darkMode, windowWidth, navRef, user, lmUserIcon, dmUserIcon, dmSettingsIcon, lmSettingsIcon, loggedIn, isOnline } = useContext(appContext)
   
   const navigate = useNavigate()
   const location = useLocation()
+  
 
   return (
     <nav ref={navRef}
@@ -26,9 +27,11 @@ const Nav = () => {
     >
 
       <div className='logo-div'
-        style={{
-          top: userAuth && loggedIn ? '0px' : '50px'
-        }}
+        // style={{
+        //   top: isOnline ?
+        //     `${userAuth && loggedIn ? '0px' : '50px'}` : '0px'
+        //   ,
+        // }}
       >
         <img src={storyScapeLogo} alt="" />
         {windowWidth > 799 && <p>Story Scape</p>}
@@ -78,8 +81,12 @@ const Nav = () => {
         </button>
 
         <NavLink className={({ isActive }) => isActive ? 'active-link ' : ''}
-          to={loggedIn ? '/profile?content-type=articles' :
-          `/login?type=sign-in&from=${location.pathname}`}
+          to={isOnline ?
+            `${loggedIn ? '/profile?content-type=articles' :
+              `/login?type=sign-in&from=${location.pathname}`
+            }`
+            : `${userAuth && '/profile?content-type=articles'}`
+          }
         >
           {darkMode ?
             <img src={user?.avatar ? user?.avatar : dmUserIcon} alt='' />

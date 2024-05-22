@@ -6,7 +6,7 @@ import { db } from '../firebase/config'
 
 const Options = () => {
   const { options, viewOptions, optionInfo, userAuth, users,
-    setShowAddToCollectionForm, setPopup, setShowPopup, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, feed, collections, makeArticlePrivate, makeArticlePublic, deletedArticles, removeFromCollection, setCollectionType, profileOptionsInfo,  } = useContext(appContext)
+    setShowAddToCollectionForm, setPopup, setShowPopup, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, feed, collections, makeArticlePrivate, makeArticlePublic, deletedArticles, removeFromCollection, setCollectionType, profileOptionsInfo, isOnline } = useContext(appContext)
   const { id, type, creator, collectionId } = optionInfo.current
 
   const [creatorAccount, setCreatorAccount] = useState()
@@ -55,146 +55,214 @@ const Options = () => {
 
 
   const deleteArticle = () => {
-    const docRef = doc(db, 'articles', id)
-    updateDoc(docRef, {
-      deleted: true
-
-    }).then(() => {
-      setShowPopup(true)
-      setPopup({
-        type: 'good',
-        message: `Article deleted successfully.`
-      })
-      
-    }).then(() => {
-      changeUserDeletedStatus()
-
-    }).catch(() => {
+    if (isOnline) {
       const docRef = doc(db, 'articles', id)
       updateDoc(docRef, {
-        deleted: false
+        deleted: true
 
       }).then(() => {
         setShowPopup(true)
         setPopup({
-          type: 'bad',
-          message: `Couldn't delete article. Please try again`
+          type: 'good',
+          message: `Article deleted successfully.`
+        })
+        
+      }).then(() => {
+        changeUserDeletedStatus()
+
+      }).catch(() => {
+        const docRef = doc(db, 'articles', id)
+        updateDoc(docRef, {
+          deleted: false
+
+        }).then(() => {
+          setShowPopup(true)
+          setPopup({
+            type: 'bad',
+            message: `Couldn't delete article. Please try again`
+          })
         })
       })
-    })
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
+    }
   }
 
 
   const deleteCollection = () => {
-    const ref = doc(db, 'users', userAuth, 'collections', id)
-    updateDoc(ref, {
-      deleted: true
+    if (isOnline) {
+      const ref = doc(db, 'users', userAuth, 'collections', id)
+      updateDoc(ref, {
+        deleted: true
 
-    }).then(() => {
+      }).then(() => {
+        setShowPopup(true)
+        setPopup({
+          type: 'good',
+          message: `Collection deleted successfully.`
+        })
+        
+      }).then(() => {
+        changeUserDeletedStatus()
+
+      }).catch(() => {
+        const ref = doc(db, 'users', userAuth, 'collections', id)
+
+        updateDoc(ref, {
+          deleted: false
+
+        }).then(() => {
+          setShowPopup(true)
+          setPopup({
+            type: 'bad',
+            message: `Couldn't delete collection. Please try again`
+          })
+        })
+      })
+
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'good',
-        message: `Collection deleted successfully.`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-      
-    }).then(() => {
-      changeUserDeletedStatus()
+    }
+  }
 
-    }).catch(() => {
-      const ref = doc(db, 'users', userAuth, 'collections', id)
 
-      updateDoc(ref, {
+  const recoverArticle = () => {
+    if (isOnline) {
+      const docRef = doc(db, 'articles', id)
+      updateDoc(docRef, {
         deleted: false
 
       }).then(() => {
         setShowPopup(true)
         setPopup({
-          type: 'bad',
-          message: `Couldn't delete collection. Please try again`
+          type: 'good',
+          message: `Article recovered successfully.`
+        })
+        
+      }).catch(() => {
+        const docRef = doc(db, 'articles', id)
+        updateDoc(docRef, {
+          deleted: true
+
+        }).then(() => {
+          setShowPopup(true)
+          setPopup({
+            type: 'bad',
+            message: `Couldn't recover article. Please try again`
+          })
         })
       })
-    })
-  }
 
-
-  const recoverArticle = () => {
-    const docRef = doc(db, 'articles', id)
-    updateDoc(docRef, {
-      deleted: false
-
-    }).then(() => {
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'good',
-        message: `Article recovered successfully.`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-      
-    }).catch(() => {
-      const docRef = doc(db, 'articles', id)
-      updateDoc(docRef, {
-        deleted: true
-
-      }).then(() => {
-        setShowPopup(true)
-        setPopup({
-          type: 'bad',
-          message: `Couldn't recover article. Please try again`
-        })
-      })
-    })
+    }
   }
   
 
   const deleteArticlePermanently = () => {
-    const docRef = doc(db, 'articles', id)
-    deleteDoc(docRef).then(() => {
+    if (isOnline) {
+      const docRef = doc(db, 'articles', id)
+      deleteDoc(docRef).then(() => {
+        setShowPopup(true)
+        setPopup({
+          type: 'good',
+          message: `Article deleted permanently.`
+        })
+      })
+
+    } else {
       setShowPopup(true)
       setPopup({
-        type: 'good',
-        message: `Article deleted permanently.`
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
       })
-    })
+    }
   }
 
 
   const deleteCollectionPermanently = () => {
-    const docRef = doc(db, 'users', userAuth, 'collections', id)
-    deleteDoc(docRef).then(() => {
-      setShowPopup(true)
-      setPopup({
-        type: 'good',
-        message: `Collection deleted permanently.`
-      })
-    })
-  }
-  
-
-  const recoverCollection = () => {
-    const ref = doc(db, 'users', userAuth, 'collections', id)
-    updateDoc(ref, {
-      deleted: false
-
-    }).then(() => {
-      setShowPopup(true)
-      setPopup({
-        type: 'good',
-        message: `Collection recovered successfully.`
-      })
-      
-    }).catch(() => {
+    if (isOnline) {
       const ref = doc(db, 'users', userAuth, 'collections', id)
-
       updateDoc(ref, {
         deleted: true
 
       }).then(() => {
         setShowPopup(true)
         setPopup({
-          type: 'bad',
-          message: `Couldn't recover collection. Please try again`
+          type: 'good',
+          message: `Collection deleted successfully.`
+        })
+        
+      }).then(() => {
+        changeUserDeletedStatus()
+
+      }).catch(() => {
+        const ref = doc(db, 'users', userAuth, 'collections', id)
+
+        updateDoc(ref, {
+          deleted: false
+
+        }).then(() => {
+          setShowPopup(true)
+          setPopup({
+            type: 'bad',
+            message: `Couldn't delete collection. Please try again`
+          })
+        })
+    })
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
+    }
+  }
+  
+
+  const recoverCollection = () => {
+    if (isOnline) {
+      const ref = doc(db, 'users', userAuth, 'collections', id)
+      updateDoc(ref, {
+        deleted: false
+  
+      }).then(() => {
+        setShowPopup(true)
+        setPopup({
+          type: 'good',
+          message: `Collection recovered successfully.`
+        })
+        
+      }).catch(() => {
+        const ref = doc(db, 'users', userAuth, 'collections', id)
+  
+        updateDoc(ref, {
+          deleted: true
+  
+        }).then(() => {
+          setShowPopup(true)
+          setPopup({
+            type: 'bad',
+            message: `Couldn't recover collection. Please try again`
+          })
         })
       })
-    })
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
+    }
   }
   
 

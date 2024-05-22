@@ -5,7 +5,7 @@ import { collection, deleteDoc, doc, serverTimestamp, setDoc } from 'firebase/fi
 import { db } from '../firebase/config';
 
 const CreateCollection = () => {
-  const { userAuth, time, setShowPopup, setPopup, createCollection, setCreateCollection, deletedCollections, userCollections, quickAddToCollection, setQuickAddToCollection, feed, optionInfo} = useContext(appContext)
+  const { userAuth, time, setShowPopup, setPopup, createCollection, setCreateCollection, deletedCollections, userCollections, quickAddToCollection, setQuickAddToCollection, feed, optionInfo, isOnline } = useContext(appContext)
   const [collectionName, setCollectionName] = useState('')
   const [isPublic, setIsPublic] = useState(true)
   const [articleToAdd, setArticleToAdd] = useState()
@@ -32,57 +32,66 @@ const CreateCollection = () => {
 
   const createNewCollection = (e) => {
     e.preventDefault()
-    setCreateCollection(false)
+    if (isOnline) {
+      setCreateCollection(false)
 
-    const condition = userCollections.find(collection => collection.name === collectionName)
+      const condition = userCollections.find(collection => collection.name === collectionName)
 
-    const conditionII = deletedCollections.find(collection => collection.name === collectionName)
+      const conditionII = deletedCollections.find(collection => collection.name === collectionName)
 
-    if (conditionII) {
-      setShowPopup(true) 
-      setPopup({
-        type: 'bad', message: `A collection already exists with this name. Profile > Settings`
-      })
-      
-    } else {
-      if (condition) {
+      if (conditionII) {
         setShowPopup(true) 
         setPopup({
-          type: 'bad', message: `A collection already exists with this name.`
+          type: 'bad', message: `A collection already exists with this name. Profile > Settings`
         })
-  
+        
       } else {
-        const collectionId = uuidv4()
-  
-        const newCollection = {
-          id: collectionId,
-          name: collectionName,
-          isPublic,
-          items: { value: articleToAdd ? [articleToAdd] : [] },
-          createdAt: serverTimestamp(),
-          creator: userAuth,
-          date: `${time.day} / ${time.month} / ${time.year}`,
-          deleted: false
+        if (condition) {
+          setShowPopup(true) 
+          setPopup({
+            type: 'bad', message: `A collection already exists with this name.`
+          })
+    
+        } else {
+          const collectionId = uuidv4()
+    
+          const newCollection = {
+            id: collectionId,
+            name: collectionName,
+            isPublic,
+            items: { value: articleToAdd ? [articleToAdd] : [] },
+            createdAt: serverTimestamp(),
+            creator: userAuth,
+            date: `${time.day} / ${time.month} / ${time.year}`,
+            deleted: false
+          }
+      
+          const collectionRef = collection(db, 'users', userAuth, 'collections')
+          setDoc(doc(collectionRef, collectionId), newCollection).then(() => {
+            setQuickAddToCollection(false)
+            setShowPopup(true) 
+            setPopup({
+              type: 'good', message: `Collection created successfully.`
+            })
+      
+          }).catch(() => {
+            setQuickAddToCollection(false)
+            cancelUpload(collectionId)
+            setShowPopup(true) 
+            setPopup({
+              type: 'bad', message: `Couldn't create collection. Please try again.`
+            })
+          })
         }
-    
-        const collectionRef = collection(db, 'users', userAuth, 'collections')
-        setDoc(doc(collectionRef, collectionId), newCollection).then(() => {
-          setQuickAddToCollection(false)
-          setShowPopup(true) 
-          setPopup({
-            type: 'good', message: `Collection created successfully.`
-          })
-    
-        }).catch(() => {
-          setQuickAddToCollection(false)
-          cancelUpload(collectionId)
-          setShowPopup(true) 
-          setPopup({
-            type: 'bad', message: `Couldn't create collection. Please try again.`
-          })
-        })
       }
+
+    } else {
+      setShowPopup(true)
+      setPopup({
+        type: 'bad', message: `Oops! Looks like there is no internet connection. Please try again.`
+      })
     }
+    
   }
 
 

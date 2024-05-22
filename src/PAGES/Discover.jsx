@@ -6,9 +6,10 @@ import dmSearchInactive from '../img-icons/dm-search-inactive.JPG'
 import SearchArticle from '../COMPONENTS/SearchArticle'
 import { Link, useSearchParams } from 'react-router-dom'
 import ProfileSearch from '../COMPONENTS/ProfileSearch'
+import IsOffline from '../COMPONENTS/IsOffline'
 
 const Discover = () => {
-  const { recentSearches, darkMode, feed, profileRecentSearches, users } = useContext(appContext)
+  const { recentSearches, darkMode, feed, profileRecentSearches, users, isOnline } = useContext(appContext)
   const [searchParams, setSearchParams] = useSearchParams()
 
   const [search, setSearch] = useState('')
@@ -104,109 +105,115 @@ const Discover = () => {
   
   return (
     <main className="discover-main">
-      <header>
-        {setTo === 'articles' ?
-          <Link to='/discover?set-to=users'>
-            users
-          </Link>
-          : setTo === 'users' &&
-          <Link to='/discover?set-to=articles'>
-            articles
-          </Link>
-        }
-        <div className='discover-input-div' role={'button'}
-          onClick={() => setShowRecents(true)}
-        >
-          <img src={darkMode ? dmSearchInactive : searchInactive} alt="" />
-          <input type="text" placeholder={feed ? `Discover ${setTo}` : 'Loading...'}
-            onChange={e => setSearch(e.target.value)} value={search}
-          />
-
-          {search !== '' &&
-            <button className='cancel'
-              onClick={() => setSearch('')}
+      {isOnline ?
+        <>
+          <header>
+            {setTo === 'articles' ?
+              <Link to='/discover?set-to=users'>
+                users
+              </Link>
+              : setTo === 'users' &&
+              <Link to='/discover?set-to=articles'>
+                articles
+              </Link>
+            }
+            <div className='discover-input-div' role={'button'}
+              onClick={() => setShowRecents(true)}
             >
-              <span></span>
-              <span></span>
-            </button>
-          }
-        </div>
-      </header>
+              <img src={darkMode ? dmSearchInactive : searchInactive} alt="" />
+              <input type="text" placeholder={feed ? `Discover ${setTo}` : 'Loading...'}
+                onChange={e => setSearch(e.target.value)} value={search}
+              />
 
-      <section className="recent-searches"
-        style={{
-          opacity: showRecents ? `1` : `0`,
-          zIndex: showRecents ? '10' : "-10",
-        }}
-      >
-        <p>
-          Recent Searches
-        </p>
-        {setTo === 'articles' ?
-          <div
-            style={{
-              display: (recentSearches.length > 0) ? 'flex' : 'none'
-            }}
-          >
-            <>
-              {recentSearches.map((search, i) => {
-                return (
-                  <RecentSearch search={search} key={i}
-                    setSearch={setSearch} setTo={setTo}
-                  />
-                )
-              })}
-            </>
-          </div>
-
-        : setTo === 'users' &&
-          <div
-            style={{
-              display: (profileRecentSearches.length > 0) ? 'flex' : 'none'
-            }}
-          >
-            <>
-              {profileRecentSearches.map((search, i) => {
-                return (
-                  <RecentSearch search={search} key={i}
-                    setSearch={setSearch} setTo={setTo}
-                  />
-                )
-              })}
-            </>
-          </div>
-        }
-      </section>
-
-      <section className="search-articles"
-        style={{
-          marginTop: showRecents ? '100px' : '30px'
-        }}
-      >
-        {setTo === 'articles' || search === '' ?
-          <>
-            {searchArticles.map(article => {
-              return (
-                <SearchArticle key={article.id} article={article}
-                  search={search}
-                />
-              )
-            })}
-          </>
-          : setTo === 'users' &&
-          <>
-            {searchProfiles.map((profile, i) => {
-              if (profile.userName) {
-                return (
-                  <ProfileSearch key={i} profile={profile}
-                  search={search}
-                  />
-                )
+              {search !== '' &&
+                <button className='cancel'
+                  onClick={() => setSearch('')}
+                >
+                  <span></span>
+                  <span></span>
+                </button>
               }
-              })}
-          </>
-        }
-      </section>
+            </div>
+          </header>
+
+          <section className="recent-searches"
+            style={{
+              opacity: showRecents ? `1` : `0`,
+              zIndex: showRecents ? '10' : "-10",
+            }}
+          >
+            <p>
+              Recent Searches
+            </p>
+            {setTo === 'articles' ?
+              <div
+                style={{
+                  display: (recentSearches.length > 0) ? 'flex' : 'none'
+                }}
+              >
+                <>
+                  {recentSearches.map((search, i) => {
+                    return (
+                      <RecentSearch search={search} key={i}
+                        setSearch={setSearch} setTo={setTo}
+                      />
+                    )
+                  })}
+                </>
+              </div>
+
+            : setTo === 'users' &&
+              <div
+                style={{
+                  display: (profileRecentSearches.length > 0) ? 'flex' : 'none'
+                }}
+              >
+                <>
+                  {profileRecentSearches.map((search, i) => {
+                    return (
+                      <RecentSearch search={search} key={i}
+                        setSearch={setSearch} setTo={setTo}
+                      />
+                    )
+                  })}
+                </>
+              </div>
+            }
+          </section>
+
+          <section className="search-articles"
+            style={{
+              marginTop: showRecents ? '100px' : '30px'
+            }}
+          >
+            {setTo === 'articles' || search === '' ?
+              <>
+                {searchArticles.map(article => {
+                  return (
+                    <SearchArticle key={article.id} article={article}
+                      search={search}
+                    />
+                  )
+                })}
+              </>
+              : setTo === 'users' &&
+              <>
+                {searchProfiles.map((profile, i) => {
+                  if (profile.userName) {
+                    return (
+                      <ProfileSearch key={i} profile={profile}
+                      search={search}
+                      />
+                    )
+                  }
+                  })}
+              </>
+            }
+          </section>
+        </>
+        :
+        <IsOffline />
+      }
     </main>
   )
 }

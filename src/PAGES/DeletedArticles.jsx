@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom'
 import ProfileArticle from '../COMPONENTS/ProfileArticle'
 import Loading from '../COMPONENTS/Loading'
 import NoMedia from '../COMPONENTS/NoMedia'
+import IsOffline from '../COMPONENTS/IsOffline'
 
 
 const DeletedArticles = () => {
-  const { deletedArticles, userAuth, myDeletedArticles, setMyDeletedArticles, user } = useContext(appContext)
+  const { deletedArticles, userAuth, myDeletedArticles, setMyDeletedArticles, user, isOnline } = useContext(appContext)
 
   const [pageLoading, setPageLoading] = useState(true)
 
@@ -23,21 +24,26 @@ const DeletedArticles = () => {
 
   
   useEffect(() => {
-    if (user) {
-      if (deletedArticles) {
-        const cond = deletedArticles.find(article => article.creator === userAuth)
-
-        if (cond) {
-          if (myDeletedArticles) {
+    if (isOnline) {
+      if (user) {
+        if (deletedArticles) {
+          const cond = deletedArticles.find(article => article.creator === userAuth)
+  
+          if (cond) {
+            if (myDeletedArticles) {
+              setPageLoading(false)
+            }
+  
+          } else {
             setPageLoading(false)
           }
-
-        } else {
-          setPageLoading(false)
         }
       }
+
+    } else {
+      setPageLoading(false)
     }
-  }, [myDeletedArticles, user, deletedArticles, userAuth])
+  }, [myDeletedArticles, user, deletedArticles, userAuth, isOnline])
 
 
   
@@ -50,30 +56,36 @@ const DeletedArticles = () => {
         <h3>Deleted articles</h3>
       </header>
 
-      {pageLoading ?
-        <Loading />
-        :
-        <section className="deleted-articles media"
-          style={{
-            gridTemplateColumns: myDeletedArticles?.length === 0 && '1fr'
-          }}
-        >
-          {myDeletedArticles.length > 0 ?
-            <>
-              {myDeletedArticles.map(article => {
-                return (
-                  <ProfileArticle key={article.id} article={article}
-                    link='blocking' type='deleted'
-                  />
-                )
-              })}
-            </>
+      {isOnline ?
+        <>
+          {pageLoading ?
+            <Loading />
             :
-            <NoMedia
-              message='When you delete an article it will show here.'
-            />
+            <section className="deleted-articles media"
+              style={{
+                gridTemplateColumns: myDeletedArticles?.length === 0 && '1fr'
+              }}
+            >
+              {myDeletedArticles.length > 0 ?
+                <>
+                  {myDeletedArticles.map(article => {
+                    return (
+                      <ProfileArticle key={article.id} article={article}
+                        link='blocking' type='deleted'
+                      />
+                    )
+                  })}
+                </>
+                :
+                <NoMedia
+                  message='When you delete an article it will show here.'
+                />
+              }
+            </section>
           }
-        </section>
+        </>
+        :
+        <IsOffline />
       }
     </main>
   )
