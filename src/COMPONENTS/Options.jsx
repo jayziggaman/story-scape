@@ -311,7 +311,8 @@ const Options = () => {
               </button>
               :
               <button onClick={() => subscribeToUser(creatorAccount)}>
-                Subscribe to account {creator}
+                Subscribe to account
+                {/* {creator} */}
               </button>
               }
             </>

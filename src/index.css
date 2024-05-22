@@ -1082,6 +1082,21 @@ article.article p.article-body {
   line-height: 23px;
 }
 
+article.article div.user-det {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 20px;
+}
+
+article.article div.user-det img {
+  height: 40px;
+  width: 40px;
+  border-radius: 30px;
+  object-fit: cover;
+}
+
 article.article p:first-child span:nth-child(2) {
   font-size: 25px;
   margin: -10px 5px 0px;
@@ -3771,8 +3786,14 @@ section.articles>article p {
   }
 
   article.article p.article-body {
-    height: 215px;
+    height: 180px;
     margin-bottom: 20px;
+  }
+
+
+  article.article div.user-det {
+    margin-top: 20px;
+    padding-left: 0;
   }
 
   .trending-marker {

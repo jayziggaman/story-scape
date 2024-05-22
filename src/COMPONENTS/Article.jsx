@@ -1,13 +1,22 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { appContext } from '../App'
 import ThreeDots from './ThreeDots'
 
 const Article = ({article}) => {
-  const { windowWidth } = useContext(appContext)
+  const { windowWidth, users } = useContext(appContext)
+  const [articleCreator, setArticleCreator] = useState()
   const location = useLocation()
-  
 
+  useEffect(() => {
+    if (article && users) {
+      const {creator} = article
+      setArticleCreator(users.find(user => user.id === creator))
+    }
+  }, [users, article])
+
+  console.log(articleCreator)
+  
   return (
     <article className='article'>
       <ThreeDots id={article?.id}
@@ -29,6 +38,7 @@ const Article = ({article}) => {
             <div className='article-img-div'>
               <img src={article?.thumbnail} alt="article thumbnail" />
             </div>
+
             <div>
               <p>
                 <span>
@@ -43,6 +53,15 @@ const Article = ({article}) => {
               <p className='article-body'>
                 {article?.body.slice(0, 150)} ...
               </p>
+
+              <div className='user-det'>
+                <div>
+                  <img src={articleCreator?.avatar} alt="" />
+                </div>
+                <p>
+                  written by <b>{articleCreator?.userName}</b>
+                </p>
+              </div>
             </div>
           </>
           :
@@ -53,10 +72,20 @@ const Article = ({article}) => {
                 {article?.title}
               </h3>
               <p className='article-body'>
-                {article?.body.slice(0, 400)}
+                {article?.body.slice(0, 250)}
               </p>
               <p>{article?.date}</p>
+
+              <div className='user-det'>
+                <div>
+                  <img src={articleCreator?.avatar} alt="" />
+                </div>
+                <p>
+                  written by <b>{articleCreator?.userName}</b>
+                </p>
+              </div>
             </div>
+
             <div className='article-img-div'>
               <img src={article?.thumbnail}   alt="article thumbnail"
             />
@@ -64,11 +93,11 @@ const Article = ({article}) => {
           </>
         }
 
-        <div className="trending-marker">
+        {/* <div className="trending-marker">
           {[1, 2, 3].map((el, i) =>
             <span key={i} className={i === i ? 'active' : ''}></span>
           )}
-        </div>
+        </div> */}
       </Link>
     </article>
   )
