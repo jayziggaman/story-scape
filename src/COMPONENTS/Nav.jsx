@@ -20,19 +20,13 @@ const Nav = () => {
   return (
     <nav ref={navRef}
       style={{
-        marginTop: userAuth ? '0px' : '50px',
+        marginTop: isOnline ? `${userAuth ? '0px' : '50px'}` : '0px',
         height: userAuth ? `${window.innerHeight}px` :
           `${window.innerHeight - 50}px`
       }}
     >
 
-      <div className='logo-div'
-        // style={{
-        //   top: isOnline ?
-        //     `${userAuth && loggedIn ? '0px' : '50px'}` : '0px'
-        //   ,
-        // }}
-      >
+      <div className='logo-div'>
         <img src={storyScapeLogo} alt="" />
         {windowWidth > 799 && <p>Story Scape</p>}
       </div>
@@ -40,9 +34,11 @@ const Nav = () => {
 
       <div className='nav'
         style={{
-          top: userAuth ? '100px' : '150px',
-          height: userAuth ? `${window.innerHeight - 100}px` :
-            `${window.innerHeight - 150}px`
+          top: isOnline ? `${userAuth ? '100px' : '150px'}` : '50px',
+          height: isOnline ?
+            `${userAuth ? `${window.innerHeight - 100}px` :
+              `${window.innerHeight - 150}px`}` :
+            `${window.innerHeight}px`,
         }}
       >
 
