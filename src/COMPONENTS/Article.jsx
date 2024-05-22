@@ -15,7 +15,6 @@ const Article = ({article}) => {
     }
   }, [users, article])
 
-  console.log(articleCreator)
   
   return (
     <article className='article'>

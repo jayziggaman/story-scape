@@ -79,7 +79,7 @@
   height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 0px 10px;
   z-index: 100;
   transition: background-color 150ms ease-in-out;
@@ -95,10 +95,6 @@
   z-index: -100;
 }
 
-.log-in-message p {
-  font-size: 0.85rem;
-}
-
 .log-in-message a {
   background-color: var(--light-mode-color);
   border: none;
@@ -108,6 +104,11 @@
   text-decoration: none;
   margin-left: 10px;
   color: white;
+}
+
+.log-in-message a svg,
+.log-in-message a svg path {
+  font-size: 1.2rem;
 }
 
 .App.dm .log-in-message a {
@@ -566,6 +567,39 @@ main.set-password-main form button {
   padding: 20px;
 }
 
+.edit-main header {
+  display: flex;
+  justify-content: flex-start;
+  width: 100vw;
+  position: relative;
+}
+
+.edit-main header a {
+  padding-top: 5px;
+  margin-left: 10px;
+  position: absolute;
+  z-index: 10;
+}
+
+@media(min-width: 600px) {
+  .edit-main header a {
+    padding-left: 20px;
+  }
+}
+
+.edit-main header svg,
+.edit-main header svg path {
+  font-size: 1.5rem;
+}
+
+.edit-main header h2 {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  justify-self: flex-end;
+  align-self: flex-end;
+}
+
 .create-account-main h2,
 .edit-main h2 {
   position: relative;
@@ -585,10 +619,9 @@ main.set-password-main form button {
   position: absolute;
   content: '';
   bottom: -2px;
-  width: 110%;
+  width: 50%;
   background-color: black;
   height: 1.5px;
-  left: -5%;
   border-radius: 20px;
 }
 
@@ -813,7 +846,8 @@ main.set-password-main form button {
   height: 60px;
 }
 
-.App.dm .is-offline header {
+.App.dm .is-offline header,
+.App.dm .is-offline-article-page header {
   background-color: var(--dark-mode-color);
 }
 
@@ -824,19 +858,64 @@ main.set-password-main form button {
   object-fit: cover;
 }
 
-.is-offline header h1 {
+.is-offline header h1,
+.is-offline-article-page header h1 {
   color: #fff;
 }
 
-.is-offline button {
+.is-offline button,
+.is-offline-article-page button {
   background-color: var(--light-mode-color);
   color: #fff;
+  border: none;
+  height: 40px;
+  width: 150px;
+  border-radius: 20px;
 }
 
-.App.dm .is-offline button {
+.App.dm .is-offline button,
+.App.dm .is-offline-article-page button {
   background-color: var(--dark-mode-color);
 }
 
+/* is-offline-article-page */
+.is-offline-article-page {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.is-offline-article-page header {
+  position: fixed;
+  top: 0;
+  height: 60px;
+  background-color: #fff;
+  width: 100%;
+  display: grid;
+  align-items: flex-end;
+  padding-bottom: 10px;
+  grid-template-columns: 40px 40px 1fr;
+  padding-left: 10px;
+  background-color: var(--light-mode-color);
+}
+
+.is-offline-article-page header svg,
+.is-offline-article-page header svg path {
+  font-size: 1.5rem;
+  /* margin-top: 10px; */
+}
+
+.is-offline-article-page header img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+  border-radius: 30px;
+}
 
 
 
@@ -871,10 +950,10 @@ main.set-password-main form button {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 100vw;
+  height: 100vh;
   z-index: 100;
   display: flex;
-  align-items: center;
+  padding-top: 50vh;
   justify-content: center;
   gap: 5px;
 }
@@ -1087,7 +1166,8 @@ article.article div.user-det {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-left: 20px;
+  padding-left: 10px;
+  margin-top: 10px;
 }
 
 article.article div.user-det img {
@@ -1433,7 +1513,7 @@ article.article>div.article-section-marker {
   padding-bottom: 10vh;
 }
 
-.article-page-main header {
+.article-page-main>header {
   display: grid;
   grid-template-columns: 30px 1fr;
   align-items: center;
@@ -1442,16 +1522,16 @@ article.article>div.article-section-marker {
   padding: 25px 10px 10px;
 }
 
-.article-page-main header svg,
-.article-page-main header svg path {
+.article-page-main>header svg,
+.article-page-main>header svg path {
   font-size: 1.3rem;
 }
 
-.App.dm .article-page-main header {
+.App.dm .article-page-main>header {
   border-bottom: 1px solid rgb(88, 87, 87);
 }
 
-.article-page-main header a {
+.article-page-main>header a {
   display: flex;
   align-items: center;
 }
@@ -3577,8 +3657,9 @@ section.articles>article p {
     height: 70px;
   }
 
-  .loading,
-  .processing {
+
+  /* .processing */
+  .loading {
     left: 100px;
     width: calc(100vw - 100px);
   }
@@ -3637,7 +3718,7 @@ section.articles>article p {
     width: 110px;
   }
 
-  .article-page-main header {
+  .article-page-main>header {
     position: fixed;
     top: 0;
     padding: 10px;
@@ -3648,7 +3729,7 @@ section.articles>article p {
     right: 0;
   }
 
-  .App.dm .article-page-main header {
+  .App.dm .article-page-main>header {
     background-color: black;
   }
 
@@ -3717,8 +3798,8 @@ section.articles>article p {
     left: 200px;
   }
 
-  .loading,
-  .processing {
+  /* .processing */
+  .loading {
     left: 200px;
     width: calc(100vw - 200px);
   }

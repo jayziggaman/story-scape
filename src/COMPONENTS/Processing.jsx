@@ -47,9 +47,9 @@ const Processing = () => {
     <section className="processing"
       style={{
         display: processing ? 'flex' : 'none',
-        left: location.pathname === '/login' || location.pathname === '/create-account' ? '0px' :
-          windowWidth > 599 ? '100px' :
-            windowWidth > 799 && '100px'
+        // left: location.pathname === '/login' || location.pathname === '/create-account' ? '0px' :
+        //   windowWidth > 599 ? '100px' :
+        //     windowWidth > 799 && '100px'
       }}
     >
       <div style={style}></div>

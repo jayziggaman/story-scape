@@ -1,7 +1,8 @@
 import { doc, updateDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { FaAngleLeft } from 'react-icons/fa'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { appContext } from '../App'
 import { db, storage } from '../firebase/config'
 import pfpIcon from '../img-icons/camera-icon.jpg'
@@ -215,9 +216,14 @@ const Edit = () => {
 
   return (
     <main className="edit-main">
-      <h2>
-        Complete your account
-      </h2>
+      <header>
+        <Link to='/settings'>
+          <FaAngleLeft />
+        </Link>
+        <h2>
+          Complete your account
+        </h2>
+      </header>
       <form action="submit"
         onSubmit={e => editAccount(e)}
       >

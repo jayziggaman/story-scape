@@ -235,14 +235,14 @@ const ArticlePage = () => {
                     {articleInView?.body}
                   </pre>
 
-                  <Link to={`/${articleCreator.userName}`}>
+                  <Link to={`/${articleCreator?.userName}`}>
                     {darkMode ?
                       <img
-                        src={articleCreator.avatar || dmUserIcon} alt=""
+                        src={articleCreator?.avatar || dmUserIcon} alt=""
                       />
                       :
                       <img
-                        src={articleCreator.avatar || lmUserIcon} alt=""
+                        src={articleCreator?.avatar || lmUserIcon} alt=""
                       />
                     }
                     written by <span>{articleCreator?.userName}</span>
