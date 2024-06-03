@@ -15,12 +15,15 @@
 .App.dm b,
 .App.dm div,
 .App.dm span,
-.App.dm svg,
-.App.dm svg path,
 .App.dm option,
 .App.dm input,
 .App.dm textarea {
   color: white;
+}
+
+.App.dm svg,
+.App.dm svg path {
+  color: var(--dm-white);
 }
 
 :root {
@@ -34,6 +37,7 @@
   /* --light-mode-color: lavender; */
   /* --light-mode-color: navy; */
   --second-black: #282828;
+  --dm-white: rgb(201, 198, 198);
   /* --second-black: rgb(25, 24, 24); */
   --border-black: rgb(79, 77, 77);
   --bold-text: 'Clash Display', sans-serif;
@@ -575,10 +579,13 @@ main.set-password-main form button {
 }
 
 .edit-main header a {
-  padding-top: 5px;
   margin-left: 10px;
   position: absolute;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 0.85rem;
 }
 
 @media(min-width: 600px) {
@@ -590,14 +597,15 @@ main.set-password-main form button {
 .edit-main header svg,
 .edit-main header svg path {
   font-size: 1.5rem;
+  margin-right: -5px;
 }
 
 .edit-main header h2 {
   display: flex;
   justify-content: center;
   width: 100%;
-  justify-self: flex-end;
   align-self: flex-end;
+  font-size: 1.1rem;
 }
 
 .create-account-main h2,
@@ -620,6 +628,7 @@ main.set-password-main form button {
   content: '';
   bottom: -2px;
   width: 50%;
+  max-width: 200px;
   background-color: black;
   height: 1.5px;
   border-radius: 20px;
@@ -639,8 +648,9 @@ main.set-password-main form button {
   background-color: rgba(255, 255, 255, 0.95);
 }
 
-.App.dm .create-account-main form,
+/* .App.dm .create-account-main form */
 .App.dm .edit-main form {
+  background-color: black;
   border: 2px solid var(--other-black);
 }
 
@@ -693,8 +703,7 @@ main.set-password-main form button {
   margin-left: 20px;
 }
 
-.App.dm .create-account-main form label:first-child p,
-.App.dm .edit-main form label:first-child p {
+.App.dm .create-account-main form label:first-child p {
   color: black;
 }
 
@@ -764,6 +773,7 @@ main.set-password-main form button {
 
 .App.dm .edit-main form label input {
   background-color: var(--other-black);
+  color: white;
 }
 
 .create-account-main form label textarea,
@@ -777,9 +787,13 @@ main.set-password-main form button {
   transition: all 350ms ease-in-out;
 }
 
-.App.dm .create-account-main form label textarea,
-.App.dm .edit-main form label textarea {
+.App.dm .create-account-main form label textarea {
   color: black;
+}
+
+.App.dm .edit-main form label textarea {
+  color: white;
+  background-color: var(--other-black);
 }
 
 .create-account-main form label:nth-child(6) p,
@@ -807,10 +821,14 @@ main.set-password-main form button {
 }
 
 .App.dm .create-account-main select,
-.App.dm .edit-main select,
-.App.dm .create-account-main option,
-.App.dm .edit-main option {
+.App.dm .create-account-main option {
   color: black;
+}
+
+.App.dm .edit-main select,
+.App.dm .edit-main option {
+  color: white;
+  background-color: var(--other-black);
 }
 
 .create-account-main select option,
@@ -1330,36 +1348,125 @@ article.article>div.article-section-marker {
 
 .new-blog-form-content.final label:nth-child(3) {
   display: grid;
-  grid-template-rows: 20px 1fr 20px;
-  max-height: 340px;
-  gap: 2vh;
+  grid-template-rows: 20px calc(15px + 2vh) 1fr;
+  height: 100%;
 }
 
-.new-blog-form-content.final label:nth-child(3) span {
+.new-blog-form-content.final label:nth-child(3)>span {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: red;
+  font-weight: 500;
+  /* margin-bottom: 2vh; */
+}
+
+.new-blog-form-content.final label:nth-child(3)>div {
   border: 1px solid gainsboro;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 20px;
   cursor: pointer;
-  height: 100%;
+  height: 47vh;
+  position: relative;
 }
 
-.App.dm .new-blog-form-content.final label:nth-child(3) span {
+.new-blog-form-content.final label:nth-child(3)>div>div {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  transition: all 350ms ease-in-out;
+}
+
+.new-blog-form-content.final label:nth-child(3)>div img,
+.new-blog-form-content.final label:nth-child(3)>div video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.App.dm .new-blog-form-content.final label:nth-child(3)>div {
   border: 1px solid var(--other-black);
 }
 
-.new-blog-form-content.final label:nth-child(3) span img {
-  height: 70px;
-  width: 70px;
-  border-radius: 50px;
-  object-fit: cover;
+.new-blog-form-content.final label:nth-child(3)>div div.thumbnail-processing {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 20;
+  background-color: transparent;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
-.new-blog-form-content.final label:nth-child(3) span img.with-thumbnail {
-  height: 100%;
-  width: 100%;
+.new-blog-form-content.final label:nth-child(3)>div div.thumbnail-processing span {
+  height: 10px;
+  width: 10px;
+  border-radius: 10px;
+  position: static;
+  padding: 0;
+}
+
+.App.dm .new-blog-form-content.final label:nth-child(3)>div div.thumbnail-processing span {
+  background-color: gainsboro;
+}
+
+.new-blog-form-content.final label:nth-child(3)>div div.thumbnail-processing span.active {
+  background-color: gray;
+}
+
+.App.dm .new-blog-form-content.final label:nth-child(3)>div div.thumbnail-processing span.active {
+  background-color: gray;
+}
+
+.new-blog-form-content.final label:nth-child(3) div span {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: gainsboro;
+  padding: 5px 7px;
   border-radius: 20px;
+  z-index: 10;
+}
+
+.new-blog-form-content.final label:nth-child(3) div button {
+  background-color: gainsboro;
+  padding: 5px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 10;
+  right: 10px;
+  top: 45%;
+  border: none;
+}
+
+.new-blog-form-content.final label:nth-child(3) div button:nth-child(2) {
+  right: unset;
+  left: 10px;
+}
+
+.new-blog-form-content.final label:nth-child(3) div button svg,
+.new-blog-form-content.final label:nth-child(3) div button svg path {
+  font-size: 1.5rem;
+}
+
+.App.dm .new-blog-form-content.final label:nth-child(3) div span,
+.App.dm .new-blog-form-content.final label:nth-child(3) div button {
+  background-color: gray;
 }
 
 .new-blog-form-content.final label:nth-child(3) b {
@@ -1518,8 +1625,14 @@ article.article>div.article-section-marker {
   grid-template-columns: 30px 1fr;
   align-items: center;
   border-bottom: 1px solid gainsboro;
-  padding-bottom: 10px;
   padding: 25px 10px 10px;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background-color: white;
 }
 
 .article-page-main>header svg,
@@ -1529,38 +1642,127 @@ article.article>div.article-section-marker {
 
 .App.dm .article-page-main>header {
   border-bottom: 1px solid rgb(88, 87, 87);
+  background-color: black;
 }
 
 .article-page-main>header a {
   display: flex;
   align-items: center;
+  width: 70px;
+  text-decoration: none;
 }
 
 .article-page-section {
   min-height: 100vh;
   height: auto;
   position: relative;
+  margin-top: 60px;
 }
 
-.article-page-section div {
+.article-page-section>div {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  border-bottom: 1px solid gainsboro;
 }
 
-.article-page-section>div>img {
+.App.dm .article-page-section>div {
+  border-bottom: 1px solid gray;
+}
+
+.article-page-section>div img {
   height: auto;
+  min-height: 50vh;
   max-height: 55vh;
   width: 100%;
-  border: 1px solid gainsboro;
   object-fit: cover;
   min-height: 300px;
 }
 
-.App.dm .article-page-section>div>img {
+.App.dm .article-page-section>div img {
   border: 1px solid var(--other-black);
+}
+
+.article-page-section div div.media-div {
+  position: absolute;
+  transform: scale(10%);
+  z-index: -1;
+  transition: all 350ms linear;
+}
+
+.article-page-section div div.media-div.curr-index {
+  position: static;
+  transform: scale(100%);
+  z-index: 5;
+}
+
+.article-page-section div div.media-div.curr-index img,
+.article-page-section div div.media-div.curr-index video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  min-height: 40vh;
+  max-height: 55vh;
+}
+
+.article-page-section div button.index-btn {
+  padding: 5px;
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  border: none;
+  right: 10px;
+}
+
+.App.dm .article-page-section div button.index-btn {
+  background-color: gray;
+}
+
+.article-page-section div button.index-btn:nth-child(1) {
+  right: unset;
+  left: 10px;
+}
+
+.article-page-section div button.index-btn svg,
+.article-page-section div button.index-btn svg path {
+  font-size: 1.3rem;
+}
+
+.App.dm .article-page-section div button.index-btn svg,
+.App.dm .article-page-section div button.index-btn svg path {
+  color: black;
+}
+
+.article-page-section div div.index-div {
+  position: absolute;
+  height: 12px;
+  width: 35px;
+  background-color: gainsboro;
+  /* border-radius: 20px; */
+  bottom: 7.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  z-index: 10;
+}
+
+.article-page-section div div.index-div span {
+  height: 6px;
+  width: 6px;
+  border-radius: 10px;
+  background-color: gray;
+  display: inline-block;
+}
+
+.article-page-section div div.index-div span.active {
+  background-color: black;
 }
 
 .article-page-section h3 {
@@ -1637,6 +1839,11 @@ footer.form>div {
   background-color: var(--other-black);
 }
 
+.App.dm footer.form>div div:last-child svg,
+.App.dm footer.form>div div:last-child svg path {
+  color: var(--dm-white);
+}
+
 footer.form>div input {
   height: 50%;
   border-radius: 10px;
@@ -1678,7 +1885,7 @@ footer.form>div div span.liked {
 }
 
 footer.form>div div span {
-  margin-left: -5px;
+  margin-left: 5px;
   position: relative;
   z-index: 10;
 }
@@ -1783,6 +1990,17 @@ footer.form>button:active {
   width: 100%;
   border-radius: 20px;
   object-fit: cover;
+}
+
+.article-comment .article-comment-name-comment {
+  text-decoration: none;
+}
+
+.article-comment .article-comment-name-comment p {
+  font-size: 0.9rem;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
 }
 
 .article-comment pre {
@@ -2956,6 +3174,17 @@ section.media>article,
   position: relative;
 }
 
+section.media.articles img.unavailable-img {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  object-fit: cover;
+  z-index: 10;
+  top: 10px;
+  left: 10px;
+  border-radius: 20px;
+}
+
 .profile-article {
   height: auto;
   border-radius: 20px;
@@ -3006,6 +3235,17 @@ section.collections>article img {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+section.collections>article img.unavailable-img {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 10;
+  height: 20px;
+  width: 20px;
+  object-fit: cover;
+  border-radius: 20px;
 }
 
 section.media.collections>article div.opt-toggle {
@@ -3553,7 +3793,7 @@ section.articles>article p {
   .saved-articles,
   .collection-page-section,
   .deleted-articles {
-    row-gap: 60px;
+    row-gap: 50px;
   }
 
 
@@ -3699,11 +3939,6 @@ section.articles>article p {
   .create-account-main select:first-child {
     width: 16.5vw;
   }
-
-  .article-page-main {
-    /* max-height: 100vh; */
-    /* overflow-y: hidden; */
-  }
 }
 
 
@@ -3724,7 +3959,6 @@ section.articles>article p {
     padding: 10px;
     height: 50px;
     left: 0;
-    z-index: 10;
     background-color: #fff;
     right: 0;
   }
@@ -3749,6 +3983,13 @@ section.articles>article p {
     left: unset;
     width: 100px;
     z-index: 50;
+    padding: 0;
+    padding-right: 20px;
+  }
+
+  .App.dm footer.form>div,
+  .App.dm footer.form>div div button {
+    background-color: transparent;
   }
 
   footer.form>div {

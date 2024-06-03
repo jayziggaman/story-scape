@@ -1,7 +1,7 @@
 import { uuidv4 } from '@firebase/util'
 import { doc, Timestamp, updateDoc } from 'firebase/firestore'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { FaAngleLeft, FaArrowLeft } from 'react-icons/fa'
+import { FaAngleLeft, FaArrowLeft, FaAngleRight } from 'react-icons/fa'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { appContext } from '../App'
 import ArticleComment from '../COMPONENTS/ArticleComment'
@@ -9,17 +9,19 @@ import ArticlePageFooter from '../COMPONENTS/ArticlePageFooter'
 import IsOffline from '../COMPONENTS/IsOffline'
 import Loading from '../COMPONENTS/Loading'
 import { db } from '../firebase/config'
+import { useSwipeable } from 'react-swipeable';
 
 
 const ArticlePage = () => {
   const { articleId } = useParams()
-  const { articleInView, setArticleInView, feed, users, hideFeatures, undoHide, windowWidth, userAuth, time, setShowPopup, setPopup, showCommentOptions, setShowCommentOptions, user, setOptionsCoord, darkMode, dmUserIcon, lmUserIcon, isOnline } = useContext(appContext)
+  const { articleInView, setArticleInView, feed, users, hideFeatures, undoHide, windowWidth, userAuth, time, setShowPopup, setPopup, showCommentOptions, setShowCommentOptions, user, setOptionsCoord, darkMode, dmUserIcon, lmUserIcon, isOnline, articles } = useContext(appContext)
   const location = useLocation()
   const [articleLoading, setArticleLoading] = useState(true)
   const [articleCreator, setArticleCreator] = useState()
   const [from, setFrom] = useState('')
   const [comment, setComment] = useState('')
   const [showCommentForm, setShowCommentForm] = useState(false)
+  const [thumbnailIndex, setThumbnailIndex] = useState(0)
   const sectionRef = useRef()
   const divRef = useRef()
 
@@ -38,10 +40,20 @@ const ArticlePage = () => {
 
 
   useEffect(() => {
-    if (feed) {
-      setArticleInView(feed.find(article => article.id === articleId))
+    // console.log(feed)
+    // console.log(articles)
+    
+    if (feed && articles) {
+      const article = articles.find(article => article.id === articleId)
+
+      if (article?.isPublic) {
+        setArticleInView(feed.find(article => article.id === articleId))
+
+      } else {
+        setArticleInView(articles.find(article => article.id === articleId))
+      }
     }
-  }, [feed])
+  }, [feed, articles])
 
 
   const scroll = () => {
@@ -190,7 +202,45 @@ const ArticlePage = () => {
       }
     }
   }
+  
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      console.log(thumbnailIndex === (articleInView?.thumbnails.length - 1))
+      console.log('left')
+      if (thumbnailIndex === (articleInView?.thumbnails.length - 1)) {
+        return
+          
+      } else {
+        setThumbnailIndex(thumbnailIndex => thumbnailIndex + 1)
+      }
+    },
+
+    onSwipedRight: () => {
+      console.log(thumbnailIndex)
+      console.log('right')
+      if (thumbnailIndex === 0) {
+        return
+
+      } else {
+        setThumbnailIndex(thumbnailIndex => thumbnailIndex - 1)
+      }
+    },
+  });
+  
+
+  const spans = document.querySelectorAll('.index-div span')
+  useEffect(() => {
+    console.log(thumbnailIndex, 't-index')
+    spans.forEach((span, ind) => {
+      if (thumbnailIndex === ind) {
+        span.classList.add('active')
+
+      } else {
+        span.classList.remove('active')
+      }
+    })
+  }, [thumbnailIndex])
 
 
 
@@ -205,10 +255,9 @@ const ArticlePage = () => {
               collectionArticles: location.state && location.state.collectionArticles
             }}
           >
-            <FaAngleLeft />
+            <FaAngleLeft /> back
           </a>
           <p>
-            {/* Header */}
           </p>
         </header>
 
@@ -220,7 +269,60 @@ const ArticlePage = () => {
               <>
                 <section className="article-page-section">
                   <div>
-                    <img src={articleInView?.thumbnail} alt="" />
+                    {articleInView?.thumbnail ?
+                      <img src={articleInView?.thumbnail} alt="" />
+                      :
+                      <>
+                        <button className='index-btn'
+                          onClick={() => {
+                            if (thumbnailIndex === 0) {
+                              return
+
+                            } else {
+                              setThumbnailIndex(thumbnailIndex => thumbnailIndex - 1)
+                            }
+                          }}
+                        >
+                          <FaAngleLeft />
+                        </button>
+
+                        {articleInView?.thumbnails.map((thumbnail, ind) => {
+                          const { type, url } = thumbnail
+                          return (
+                            <div {...handlers} key={ind}
+                              className={thumbnailIndex === ind ?
+                                'media-div curr-index' : 'media-div'
+                              }
+                            >
+                              {type === 'img' ?
+                                <img src={url} alt="" />
+                              
+                              : type === 'vid' &&
+                                <video src={url} controls></video>
+                              }
+                            </div>
+                          )
+                        })}
+
+                        <button className='index-btn'
+                          onClick={() => {
+                            if (thumbnailIndex === (articleInView?.thumbnails.length - 1)) {
+                              return
+                                
+                            } else {
+                              setThumbnailIndex(thumbnailIndex => thumbnailIndex + 1)
+                            }
+                          }}
+                        >
+                          <FaAngleRight />
+                        </button>
+
+                        <div className='index-div'>
+                          <span className='active'></span>
+                          <span></span>
+                        </div>
+                      </>
+                    }
                   </div>
 
                   <h3>

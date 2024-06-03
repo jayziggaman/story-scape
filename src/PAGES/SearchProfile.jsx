@@ -12,7 +12,7 @@ import IsOffline from '../COMPONENTS/IsOffline'
 
 const SearchProfile = () => {
   const { profileUserName } = useParams()
-  const { currUser, setCurrUser, users, userAuth, loading, darkMode, dmUserIcon, lmUserIcon, feed, subscribeToUser, unSubscribeToUser, isOnline } = useContext(appContext)
+  const { currUser, setCurrUser, users, userAuth, loading, darkMode, dmUserIcon, lmUserIcon, feed, subscribeToUser, unSubscribeToUser, isOnline, articles } = useContext(appContext)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const [pageLoading, setPageLoading] = useState(true)
@@ -65,28 +65,69 @@ const SearchProfile = () => {
 
   useEffect(() => {
     let collectionSnap
-    if (currUser) {
+    if (currUser && userAuth) {
 
-      const arr = []
-      feed.map(item => {
-        currUser.articles.value.map(article => {
-          if (article === item.id) {
-            arr.push(item)
-          }
+      const condition = currUser.id === userAuth
+
+      if (condition) {
+        const arr = []
+        articles.map(item => {
+          currUser.articles.value.map(article => {
+            if (article === item.id) {
+              arr.push(item)
+            }
+          })
         })
-      })
-      setCurrUserArticles([...arr])
+        setCurrUserArticles([...arr])
+        
+      } else {
+        if (currUser.areArticlesPrivate) {
+          setCurrUserArticles([])
+  
+        } else {
+          const arr = []
+          feed.map(item => {
+            currUser.articles.value.map(article => {
+              if (article === item.id) {
+                arr.push(item)
+              }
+            })
+          })
+          setCurrUserArticles([...arr])
+        }
+      }
+      
 
-      const collectionRef = collection(db, 'users', currUser.id, 'collections')
-      collectionSnap = onSnapshot(collectionRef, snap => {
-        let tempCollections = []
-        snap.docs.forEach(doc => {
-          tempCollections.push({...doc.data(), id: doc.id})
+
+      if (condition) {
+        const collectionRef = collection(db, 'users', currUser.id, 'collections')
+        collectionSnap = onSnapshot(collectionRef, snap => {
+          let tempCollections = []
+          snap.docs.forEach(doc => {
+            tempCollections.push({...doc.data(), id: doc.id})
+          })
+  
+          const col = tempCollections.filter(col => col.deleted === false)
+          setCurrUserCollections(col)
         })
 
-        const col = tempCollections.filter(col => col.deleted === false)
-        setCurrUserCollections(col)
-      })
+      } else {
+        if (currUser.areCollectionsPrivate) {
+          setCurrUserCollections([])
+          
+        } else {
+          const collectionRef = collection(db, 'users', currUser.id, 'collections')
+          collectionSnap = onSnapshot(collectionRef, snap => {
+            let tempCollections = []
+            snap.docs.forEach(doc => {
+              tempCollections.push({...doc.data(), id: doc.id})
+            })
+    
+            const col = tempCollections.filter(col => col.deleted === false && col.isPublic === true)
+            setCurrUserCollections(col)
+          })
+        }
+      }
     }
 
     return () => {
@@ -94,7 +135,7 @@ const SearchProfile = () => {
         collectionSnap()
       }
     }
-  }, [currUser])
+  }, [currUser, userAuth])
 
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { appContext } from '../App'
 import ThreeDots from './ThreeDots'
 
 const Article = ({article}) => {
-  const { windowWidth, users } = useContext(appContext)
+  const { windowWidth, users, darkMode, dmUserIcon, lmUserIcon } = useContext(appContext)
   const [articleCreator, setArticleCreator] = useState()
   const location = useLocation()
 
@@ -19,7 +19,9 @@ const Article = ({article}) => {
   return (
     <article className='article'>
       <ThreeDots id={article?.id}
-        thumbnail={article?.thumbnail}
+        thumbnail={
+          article?.thumbnail ? article?.thumbnail : article?.thumbnails.find(item => item.type === 'img').url
+        }
         creator={article?.creator}
         type='article'
         isDeleted={article?.deleted}
@@ -35,7 +37,13 @@ const Article = ({article}) => {
         {windowWidth < 901 ?
           <>
             <div className='article-img-div'>
-              <img src={article?.thumbnail} alt="article thumbnail" />
+              {article?.thumbnail ?
+                <img src={article?.thumbnail} alt="article thumbnail" />
+                :
+                <img src={article?.thumbnails.find(item => item.type === 'img').url}
+                  alt="article thumbnail" 
+                />
+              }
             </div>
 
             <div>
@@ -55,7 +63,11 @@ const Article = ({article}) => {
 
               <div className='user-det'>
                 <div>
-                  <img src={articleCreator?.avatar} alt="" />
+                  {darkMode ?
+                    <img src={articleCreator?.avatar || dmUserIcon} alt='User pfp' />
+                  :
+                    <img src={articleCreator?.avatar || lmUserIcon} alt='User pfp' />
+                  }
                 </div>
                 <p>
                   written by <b>{articleCreator?.userName}</b>
@@ -77,7 +89,11 @@ const Article = ({article}) => {
 
               <div className='user-det'>
                 <div>
-                  <img src={articleCreator?.avatar} alt="" />
+                  {darkMode ?
+                    <img src={articleCreator?.avatar || dmUserIcon} alt='User pfp' />
+                  :
+                    <img src={articleCreator?.avatar || lmUserIcon} alt='User pfp' />
+                  }
                 </div>
                 <p>
                   written by <b>{articleCreator?.userName}</b>
@@ -86,8 +102,13 @@ const Article = ({article}) => {
             </div>
 
             <div className='article-img-div'>
-              <img src={article?.thumbnail}   alt="article thumbnail"
-            />
+             {article?.thumbnail ?
+                <img src={article?.thumbnail} alt="article thumbnail" />
+                :
+                <img src={article?.thumbnails.find(item => item.type === 'img').url}
+                  alt="article thumbnail" 
+                />
+              }
             </div>
           </>
         }

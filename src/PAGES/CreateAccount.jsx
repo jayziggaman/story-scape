@@ -7,7 +7,7 @@ import { db, storage } from '../firebase/config'
 import pfpIcon from '../img-icons/camera-icon.jpg'
 
 const CreateAccount = () => {
-  const { time, imgTypes, userAuth, users, setShowPopup, setPopup, hideFeatures, undoHide, windowWidth, root, user, setProcessing } = useContext(appContext)
+  const { time, imgTypes, users, setShowPopup, setPopup, hideFeatures, undoHide, windowWidth, root, user, setUser, setProcessing, setUserAuth } = useContext(appContext)
   
   const dobs = [
     {month: 'January', days: 31},
@@ -23,6 +23,9 @@ const CreateAccount = () => {
     {month: 'November', days: 30},
     {month: 'December', days: 31},
   ]
+  const [auth, setAuth] = useState(
+    JSON.parse(localStorage.getItem('story-scape-user-auth')) || null
+  )
   const [userImg, setUserImg] = useState()
   const [pendingImg, setPendingImg] = useState()
   const [userName, setUserName] = useState('')
@@ -95,7 +98,7 @@ const CreateAccount = () => {
         setProcessing(true)
         const selected = pendingImg
   
-        const pfpRef = ref(storage, `pending-pfps/${userAuth}`)
+        const pfpRef = ref(storage, `pending-pfps/${auth}`)
         uploadBytes(pfpRef, selected).then(() => {
           getDownloadURL(pfpRef).then(url => {
             setProcessing(true)
@@ -115,7 +118,7 @@ const CreateAccount = () => {
         })
       }
     }
-  }, [pendingImg, userAuth])
+  }, [pendingImg, auth])
 
 
   const dobRender = useRef(true)
@@ -179,10 +182,10 @@ const CreateAccount = () => {
 
     } else {
       setProcessing(true)
-      const docRef = doc(db, 'users', userAuth)
+      const docRef = doc(db, 'users', auth)
 
       updateDoc(docRef, {
-        id: userAuth,
+        id: auth,
         avatar: userImg || '',
         firstName,
         lastName,
@@ -205,6 +208,7 @@ const CreateAccount = () => {
         deleted: false
         
       }).then(() => {
+        setUserAuth(auth)
         navigate(from || '/', { replace: true })
 
       }).catch(() => {

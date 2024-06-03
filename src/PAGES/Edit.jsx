@@ -218,10 +218,10 @@ const Edit = () => {
     <main className="edit-main">
       <header>
         <Link to='/settings'>
-          <FaAngleLeft />
+          <FaAngleLeft /> back
         </Link>
         <h2>
-          Complete your account
+          Edit your account
         </h2>
       </header>
       <form action="submit"

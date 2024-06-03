@@ -19,13 +19,12 @@ const IsOffline = () => {
     }
   }, [location])
 
-  console.log(location)
   
   if (articlePage) {
     return (
       <section className="is-offline-article-page">
         <header>
-          <Link to={location.state.from}>
+          <Link to={location.state?.from ? location.state?.from : '/'}>
             <FaAngleLeft />
           </Link>
           <img src={storyScapeLogo} alt="" />

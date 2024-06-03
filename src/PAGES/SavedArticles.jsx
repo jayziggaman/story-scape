@@ -16,8 +16,11 @@ const SavedArticles = () => {
       </header>
 
       <section className="saved-articles">
-        {saved.map((save, i) => <ProfileArticle key={i} article={save}
-        />)}
+        {saved.map((save, i) => {
+          return (
+            <ProfileArticle key={i} article={save}/>
+          )
+        })}
       </section>
     </main>
   )

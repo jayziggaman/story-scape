@@ -56,12 +56,11 @@ const CollectionPage = () => {
   }, [windowWidth, location])
 
 
-
   return (
     <main className="collection-page-main">
       <header>
         <Link to='/profile?content-type=collections'>
-          <FaAngleLeft />
+          <FaAngleLeft /> 
         </Link>
 
         <h3>

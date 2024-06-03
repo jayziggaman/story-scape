@@ -1,6 +1,7 @@
 import { doc, updateDoc } from 'firebase/firestore'
 import React, { useContext, useEffect, useState } from 'react'
 import { FaThumbtack, FaRegHeart } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 import { appContext } from '../App'
 import { db } from '../firebase/config'
 
@@ -61,33 +62,38 @@ const ArticleComment = ({
 
   return (
     <div className="article-comment">
-      <div className="article-comment-img-div">
+      <Link to={`/${commentCreator?.userName}`} className="article-comment-img-div">
         {darkMode ?
           <img src={commentCreator?.avatar || dmUserIcon} alt="" />
           :
           <img src={commentCreator?.avatar || lmUserIcon} alt="" />
         }
-      </div>
+      </Link>
 
-      <pre onClick={() => setShowFullComment(!showFullComment)}>
-        {comment.body.length > 100 ?
-          <>
-            {showFullComment ?
-              <>
-                {comment.body}
-              </>
-              :
-              <>
-                {comment.body.slice(0, 100)}... <b>more</b>
-              </>
-            }
-          </>
-          :
-          <>
-            {comment.body}
-          </>
-        }
-      </pre>
+      <Link to={`/${commentCreator?.userName}`} className="article-comment-name-comment">
+        <p>
+          {commentCreator?.userName}
+        </p>
+        <pre onClick={() => setShowFullComment(!showFullComment)}>
+          {comment.body.length > 100 ?
+            <>
+              {showFullComment ?
+                <>
+                  {comment.body}
+                </>
+                :
+                <>
+                  {comment.body.slice(0, 100)}... <b>more</b>
+                </>
+              }
+            </>
+            :
+            <>
+              {comment.body}
+            </>
+          }
+        </pre>
+      </Link>
 
       <span className='pin-span'>
         {comment.pinned && <FaThumbtack />}

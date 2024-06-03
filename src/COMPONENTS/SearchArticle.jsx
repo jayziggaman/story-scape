@@ -36,7 +36,13 @@ const SearchArticle = ({article, search}) => {
         {windowWidth < 901 ?
           <>
             <div className='article-img-div'>
-              <img src={article?.thumbnail} alt="article thumbnail" />
+              {article?.thumbnail ?
+                <img src={article?.thumbnail} alt="article thumbnail" />
+                :
+                <img src={article?.thumbnails.find(item => item.type === 'img').url}
+                  alt="article thumbnail" 
+                />
+              }
             </div>
             <div>
               <p>

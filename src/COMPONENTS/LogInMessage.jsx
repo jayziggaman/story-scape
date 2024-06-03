@@ -29,13 +29,11 @@ const LogInMessage = () => {
   }, [location])
 
 
-  console.log(location.state)
-
   return (
     <div ref={ref} className='log-in-message'>
       <p></p>
       {articlePage && windowWidth > 699 &&
-        <Link to={location.state?.from}
+        <Link to={location.state?.from ? location.state?.from : '/'}
           style={{ backgroundColor: 'transparent', position: 'absolute', left: '-10px' }}
         >
           <FaAngleLeft />

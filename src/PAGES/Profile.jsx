@@ -169,7 +169,7 @@ const Profile = () => {
               <section
                 className={
                   contentType && !user ? contentType :
-                  user && userArticles.length > 0 ? `media ${contentType}` :
+                  user && userArticles?.length > 0 ? `media ${contentType}` :
                   `no-articles ${contentType} media`
                 }
 
@@ -179,13 +179,13 @@ const Profile = () => {
               >
                 {contentType === 'articles' &&
                   <>
-                    {userArticles.length === 0 ?
+                    {userArticles?.length === 0 ?
                       <NoMedia 
                         message='You have not written any article yet. When you share an article it will show here.'
                       />
                       :
                       <>
-                        {userArticles.sort((a, b) => b.createdAt - a.createdAt)
+                        {userArticles?.sort((a, b) => b.createdAt - a.createdAt)
                           .map((article, i) =>
                           <ProfileArticle key={i}
                             article={article}

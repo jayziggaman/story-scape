@@ -33,6 +33,8 @@ import SetPassword from './PAGES/SetPassword'
 import SearchProfile from './PAGES/SearchProfile'
 import { onAuthStateChanged } from 'firebase/auth'
 import Processing from './COMPONENTS/Processing'
+import SearchCollectionPage from './PAGES/SearchCollectionPage'
+import unavailable from '../src/images/unavailable.jpg'
 
 export const appContext = React.createContext()
 
@@ -508,13 +510,12 @@ const App = () => {
       setLoggedIn(false)
     }
   }, [user])
-  
-  
+
 
   useEffect(() => {
     let collectionSnap
 
-    if (user) {
+    if (user && userAuth) {
       const collectionRef = collection(db, 'users', userAuth, 'collections')
       collectionSnap = onSnapshot(collectionRef, snap => {
         let tempCollections = []
@@ -545,7 +546,7 @@ const App = () => {
       articles.map(article => {
         const creator = users.find(user => user.id === article.creator)
 
-        if (!creator.areArticlesPrivate) {
+        if (!creator.areArticlesPrivate && article.isPublic) {
           arr.push(article)
         }
       })
@@ -592,7 +593,7 @@ const App = () => {
     if (showPopup) {
       interval = setInterval(() => {
         setShowPopup(false)
-      }, 3000);
+      }, 4000);
     }
 
     return () => {
@@ -722,7 +723,7 @@ const App = () => {
     >
       <appContext.Provider
         value={{
-          showNewForm, setShowNewForm, windowWidth, options, accessOptions, viewOptions, setViewOptions, recentSearches, setRecentSearches, darkMode, setDarkMode, isArticleView, setIsArticleView, articleInView, setArticleInView, userAuth, navRef, footerRef, showPopup, setShowPopup, popup, setPopup, users, time, imgTypes, vidTypes, user, articles, userArticles, setUserArticles, userCollections, setUserCollections, showAddToCollectionForm, setShowAddToCollectionForm, createCollection, setCreateCollection, optionInfo, collectionArticles, setCollectionArticles, appRef, hideFeatures, undoHide, setAuthMethod, checkForId, loading, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, makeArticlePrivate, makeArticlePublic, deletedArticles, myDeletedArticles, setMyDeletedArticles, deletedCollections, collections, quickAddToCollection, setQuickAddToCollection, showCommentOptions, setShowCommentOptions, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, optionsCoord, setOptionsCoord, showLogOut, setShowLogOut, showDeleteForm, setShowDeleteForm, uploadPassword, root, createUser, collectionType, setCollectionType, removeFromCollection, feed, currUser, setCurrUser, profileRecentSearches, setProfileRecentSearches, setOptions, profileOptionsInfo, loggedIn, processing, setProcessing, isOnline
+          showNewForm, setShowNewForm, windowWidth, options, accessOptions, viewOptions, setViewOptions, recentSearches, setRecentSearches, darkMode, setDarkMode, isArticleView, setIsArticleView, articleInView, setArticleInView, userAuth, setUserAuth, navRef, footerRef, showPopup, setShowPopup, popup, setPopup, users, time, imgTypes, vidTypes, user, setUser, articles, userArticles, setUserArticles, userCollections, setUserCollections, showAddToCollectionForm, setShowAddToCollectionForm, createCollection, setCreateCollection, optionInfo, collectionArticles, setCollectionArticles, appRef, hideFeatures, undoHide, setAuthMethod, checkForId, loading, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, makeArticlePrivate, makeArticlePublic, deletedArticles, myDeletedArticles, setMyDeletedArticles, deletedCollections, collections, quickAddToCollection, setQuickAddToCollection, showCommentOptions, setShowCommentOptions, dmUserIcon, lmUserIcon, dmSettingsIcon, lmSettingsIcon, optionsCoord, setOptionsCoord, showLogOut, setShowLogOut, showDeleteForm, setShowDeleteForm, uploadPassword, root, createUser, collectionType, setCollectionType, removeFromCollection, feed, currUser, setCurrUser, profileRecentSearches, setProfileRecentSearches, setOptions, profileOptionsInfo, loggedIn, processing, setProcessing, isOnline, unavailable
         }}
       >
         {windowWidth < 600 ? <Footer /> : <Nav />}
@@ -744,6 +745,7 @@ const App = () => {
             <Route exact path='/discover' element={<Discover />} />
             <Route exact path='/profile' element={<Profile />} />
             <Route exact path='/profile/:collectionId' element={<CollectionPage />} />
+            <Route exact path='/:profileUserName/:collectionId' element={<SearchCollectionPage />} />
             <Route exact path='/settings' element={<Settings />} />
             <Route exact path='/settings/edit' element={<Edit />} />
             <Route exact path='/settings/deleted-articles'

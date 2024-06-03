@@ -94,7 +94,7 @@ const AddToCollectionForm = () => {
           const {id, thumbnail} = optionInfo.current
   
           const condition = arr.find(item => item.id === id)
-  
+
           if (!condition) {
             updateDoc(collectionRef, {
               items: {
@@ -111,12 +111,10 @@ const AddToCollectionForm = () => {
             })
   
           } else {
-            if (collection.length === 1) {
-              // setShowPopup(true) 
-              // setPopup({
-              //   type: 'bad', message: `This article has already been added to the collection.`
-              // })
-            }
+            setShowPopup(true) 
+            setPopup({
+              type: 'info', message: `This article has been previously added to this collection.`
+            })
           }
         }).catch(() => {
           setShowPopup(true) 

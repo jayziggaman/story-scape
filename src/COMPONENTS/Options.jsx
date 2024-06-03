@@ -6,7 +6,7 @@ import { db } from '../firebase/config'
 
 const Options = () => {
   const { options, viewOptions, optionInfo, userAuth, users,
-    setShowAddToCollectionForm, setPopup, setShowPopup, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, feed, collections, makeArticlePrivate, makeArticlePublic, deletedArticles, removeFromCollection, setCollectionType, profileOptionsInfo, isOnline } = useContext(appContext)
+    setShowAddToCollectionForm, setPopup, setShowPopup, changeUserDeletedStatus, subscribeToUser, unSubscribeToUser, feed, collections, makeArticlePrivate, makeArticlePublic, deletedArticles, removeFromCollection, setCollectionType, profileOptionsInfo, isOnline, user } = useContext(appContext)
   const { id, type, creator, collectionId } = optionInfo.current
 
   const [creatorAccount, setCreatorAccount] = useState()
@@ -264,6 +264,7 @@ const Options = () => {
       })
     }
   }
+
   
 
   return (
@@ -288,11 +289,11 @@ const Options = () => {
                 <>
                 {thisArticle?.isPublic ?
                   <button onClick={() => makeArticlePrivate(id)}>
-                    Make private
+                    Make article private
                   </button>
                   :
                   <button onClick={() => makeArticlePublic(id)}>
-                    Make public
+                    Make article public
                   </button>
                   }
                   <button className='red' onClick={() => deleteArticle()}>
@@ -312,7 +313,6 @@ const Options = () => {
               :
               <button onClick={() => subscribeToUser(creatorAccount)}>
                 Subscribe to account
-                {/* {creator} */}
               </button>
               }
             </>

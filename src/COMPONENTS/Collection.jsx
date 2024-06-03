@@ -4,7 +4,7 @@ import { appContext } from '../App'
 import ThreeDots from './ThreeDots'
 
 const Collection = ({collection, link}) => {
-  const { user, feed } = useContext(appContext)
+  const { user, feed, unavailable } = useContext(appContext)
 
   const [displayArticles, setDisplayArticles] = useState([])
 
@@ -33,6 +33,10 @@ const Collection = ({collection, link}) => {
         />
       }
 
+      {!collection?.isPublic &&
+        <img src={unavailable} alt="" className='unavailable-img'/>
+      }
+
       {user &&
         <>
           <Link to={link === 'blocking' ? '' : collection?.id}
@@ -41,6 +45,13 @@ const Collection = ({collection, link}) => {
               return (
                 <div key={val.id}>
                   <img src={val.thumbnail} alt="" />
+                  {/* {val.thumbnail ?
+                    <img src={val.thumbnail} alt="article thumbnail" />
+                    :
+                    <img src={val.thumbnails.find(item => item.type === 'img').url}
+                      alt="article thumbnail" 
+                    />
+                  } */}
                 </div>
               )
             })}
