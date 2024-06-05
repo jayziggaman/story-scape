@@ -40,9 +40,6 @@ const ArticlePage = () => {
 
 
   useEffect(() => {
-    // console.log(feed)
-    // console.log(articles)
-    
     if (feed && articles) {
       const article = articles.find(article => article.id === articleId)
 
@@ -206,8 +203,6 @@ const ArticlePage = () => {
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      console.log(thumbnailIndex === (articleInView?.thumbnails.length - 1))
-      console.log('left')
       if (thumbnailIndex === (articleInView?.thumbnails.length - 1)) {
         return
           
@@ -217,8 +212,6 @@ const ArticlePage = () => {
     },
 
     onSwipedRight: () => {
-      console.log(thumbnailIndex)
-      console.log('right')
       if (thumbnailIndex === 0) {
         return
 
@@ -231,7 +224,6 @@ const ArticlePage = () => {
 
   const spans = document.querySelectorAll('.index-div span')
   useEffect(() => {
-    console.log(thumbnailIndex, 't-index')
     spans.forEach((span, ind) => {
       if (thumbnailIndex === ind) {
         span.classList.add('active')

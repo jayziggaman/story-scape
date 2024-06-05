@@ -323,7 +323,7 @@ const LogIn = () => {
                   type === 'sign-up' ? "sign-up" : ''}
               >
                 <a href={from ? from : '/'}>
-                  <FaAngleLeft /> 
+                  <FaAngleLeft /> back
               </a>
               </header>
 
@@ -530,7 +530,7 @@ const LogIn = () => {
                   type === 'sign-up' ? "sign-up" : ''}
               >
                 <a href={from ? from : '/'}>
-                  <FaAngleLeft /> 
+                  <FaAngleLeft /> back
                 </a>
               </header>
               <section

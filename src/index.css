@@ -110,6 +110,13 @@
   color: white;
 }
 
+.log-in-message a.log-in-back-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
 .log-in-message a svg,
 .log-in-message a svg path {
   font-size: 1.2rem;
@@ -244,9 +251,24 @@ select {
   padding-left: 10px;
 }
 
+.login-main>header a {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
 .login-main>header svg,
 .login-main>header svg path {
   font-size: 20px;
+}
+
+.login-main>header.sign-up svg,
+.login-main>header.sign-up svg path,
+.login-main>header.sign-in svg,
+.login-main>header.sign-in svg path {
+  color: #fff;
 }
 
 .login-main>header.sign-up svg,
@@ -3538,7 +3560,7 @@ section.articles>article p {
 .settings-main section>div>span.toggle {
   display: inline-block;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   justify-content: center;
   padding-top: 5px;
   cursor: pointer;
@@ -3747,13 +3769,6 @@ section.articles>article p {
 
   .login-main {
     background-color: black;
-  }
-
-  .login-main>header.sign-up svg,
-  .login-main>header.sign-up svg path,
-  .login-main>header.sign-in svg,
-  .login-main>header.sign-in svg path {
-    color: #fff;
   }
 
   .login-main section {

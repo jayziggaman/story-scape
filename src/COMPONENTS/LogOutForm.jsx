@@ -34,7 +34,9 @@ const LogOutForm = () => {
 
         if (userPassword.value === password) {
           signOut(auth).then(() => {
+            localStorage.removeItem('story-scape-user-auth')
             localStorage.removeItem('story-scape-dark-mode')
+            localStorage.removeItem('story-scape-recent-searches')
             localStorage.removeItem('story-scape-sign-in-method')
 
             setShowLogOut(false)

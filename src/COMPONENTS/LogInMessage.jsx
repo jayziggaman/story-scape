@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { appContext } from '../App'
 
 const LogInMessage = () => {
-  const {windowWidth} = useContext(appContext)
+  const { darkMode } = useContext(appContext)
   const [articlePage, setArticlePage] = useState(false)
   const ref = useRef()
   const location = useLocation()
@@ -29,14 +29,19 @@ const LogInMessage = () => {
   }, [location])
 
 
+
   return (
     <div ref={ref} className='log-in-message'>
       <p></p>
-      {articlePage && windowWidth > 699 &&
+      {articlePage && 
         <Link to={location.state?.from ? location.state?.from : '/'}
-          style={{ backgroundColor: 'transparent', position: 'absolute', left: '-10px' }}
+          style={{
+            backgroundColor: 'transparent', position: 'absolute', left: '-10px',
+            color: darkMode ? 'white' : 'black'
+          }}
+          className='log-in-back-link'
         >
-          <FaAngleLeft />
+          <FaAngleLeft /> back
         </Link>
       }
       <div>
